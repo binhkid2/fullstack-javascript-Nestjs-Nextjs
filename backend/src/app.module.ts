@@ -12,6 +12,7 @@ import { User } from './users/user.entity';
 import { RefreshToken } from './auth/entities/refresh-token.entity';
 import { MagicLinkToken } from './auth/entities/magic-link-token.entity';
 import { OAuthAccount } from './auth/entities/oauth-account.entity';
+import { PasswordResetToken } from './auth/entities/password-reset-token.entity';
 
 @Module({
   imports: [
@@ -29,7 +30,13 @@ import { OAuthAccount } from './auth/entities/oauth-account.entity';
         ssl: configService.get<boolean>('db.ssl')
           ? { rejectUnauthorized: false }
           : false,
-        entities: [User, RefreshToken, MagicLinkToken, OAuthAccount],
+        entities: [
+          User,
+          RefreshToken,
+          MagicLinkToken,
+          OAuthAccount,
+          PasswordResetToken,
+        ],
         synchronize: false,
         logging: false,
       }),

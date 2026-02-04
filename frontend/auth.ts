@@ -46,6 +46,48 @@ export const authOptions: NextAuthOptions = {
         };
       },
     }),
+    CredentialsProvider({
+      id: 'password',
+      name: 'Password',
+      credentials: {
+        email: { label: 'Email', type: 'email' },
+        password: { label: 'Password', type: 'password' },
+      },
+      async authorize(credentials) {
+        const email = credentials?.email?.toString() ?? '';
+        const password = credentials?.password?.toString() ?? '';
+
+        if (!email || !password) {
+          return null;
+        }
+
+        const apiUrl =
+          process.env.INTERNAL_API_URL ??
+          process.env.NEXT_PUBLIC_API_URL ??
+          'http://localhost:3000';
+
+        const response = await fetch(`${apiUrl}/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password }),
+        });
+
+        if (!response.ok) {
+          return null;
+        }
+
+        const data = await response.json();
+
+        return {
+          id: data.user?.id ?? email,
+          email: data.user?.email ?? email,
+          name: data.user?.name ?? null,
+          role: data.user?.role ?? 'MEMBER',
+          accessToken: data.accessToken,
+          refreshToken: data.refreshToken,
+        };
+      },
+    }),
   ],
   pages: {
     signIn: '/login',

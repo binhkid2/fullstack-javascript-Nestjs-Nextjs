@@ -9,6 +9,7 @@ import { EmailService } from './email.service';
 import { MagicLinkToken } from './entities/magic-link-token.entity';
 import { RefreshToken } from './entities/refresh-token.entity';
 import { OAuthAccount } from './entities/oauth-account.entity';
+import { PasswordResetToken } from './entities/password-reset-token.entity';
 import { User } from '../users/user.entity';
 import { JwtStrategy } from '../common/strategies/jwt.strategy';
 import { JwtRefreshStrategy } from '../common/strategies/jwt-refresh.strategy';
@@ -24,6 +25,7 @@ import { GoogleStrategy } from '../common/strategies/google.strategy';
       MagicLinkToken,
       RefreshToken,
       OAuthAccount,
+      PasswordResetToken,
     ]),
   ],
   controllers: [AuthController],

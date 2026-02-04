@@ -14,7 +14,9 @@ import { User } from '../users/user.entity';
 import { MagicLinkToken } from './entities/magic-link-token.entity';
 import { RefreshToken } from './entities/refresh-token.entity';
 import { OAuthAccount } from './entities/oauth-account.entity';
+import { PasswordResetToken } from './entities/password-reset-token.entity';
 import { Role } from '../roles/role.enum';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
@@ -29,6 +31,8 @@ export class AuthService {
     private readonly refreshTokenRepo: Repository<RefreshToken>,
     @InjectRepository(OAuthAccount)
     private readonly oauthRepo: Repository<OAuthAccount>,
+    @InjectRepository(PasswordResetToken)
+    private readonly resetTokenRepo: Repository<PasswordResetToken>,
     @InjectRepository(User)
     private readonly usersRepo: Repository<User>,
   ) {}
@@ -62,6 +66,46 @@ export class AuthService {
     await this.emailService.sendMagicLink(user.email, link);
 
     return { ok: true };
+  }
+
+  async registerWithPassword(email: string, password: string, name?: string) {
+    const existing = await this.usersService.findByEmail(email);
+    if (existing) {
+      throw new BadRequestException('Email already in use');
+    }
+
+    const passwordHash = await bcrypt.hash(password, 10);
+    const user = this.usersRepo.create({
+      email,
+      name,
+      role: Role.MEMBER,
+      passwordHash,
+    });
+    await this.usersRepo.save(user);
+    return { ok: true };
+  }
+
+  async loginWithPassword(email: string, password: string) {
+    const user = await this.usersService.findByEmail(email);
+    if (!user || !user.passwordHash) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    const isValid = await bcrypt.compare(password, user.passwordHash);
+    if (!isValid) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    const tokens = await this.issueTokens(user);
+    return {
+      ...tokens,
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name ?? null,
+        role: user.role,
+      },
+    };
   }
 
   async verifyMagicLink(email: string, token: string) {
@@ -104,6 +148,64 @@ export class AuthService {
         role: user.role,
       },
     };
+  }
+
+  async requestPasswordReset(email: string) {
+    const user = await this.usersService.findByEmail(email);
+    if (!user) {
+      return { ok: true };
+    }
+
+    const token = randomBytes(32).toString('hex');
+    const tokenHash = this.hashToken(token);
+    const ttlSeconds =
+      this.configService.get<number>('passwordReset.ttlSeconds') ?? 900;
+    const expiresAt = new Date(Date.now() + ttlSeconds * 1000);
+
+    const record = this.resetTokenRepo.create({
+      tokenHash,
+      expiresAt,
+      user,
+    });
+    await this.resetTokenRepo.save(record);
+
+    const baseUrl =
+      this.configService.get<string>('magicLink.baseUrl') ??
+      this.configService.get<string>('app.baseUrl') ??
+      'http://localhost:3001';
+
+    const link = `${baseUrl}/reset-password?token=${encodeURIComponent(
+      token,
+    )}`;
+
+    await this.emailService.sendPasswordReset(user.email, link);
+
+    return { ok: true };
+  }
+
+  async resetPassword(token: string, newPassword: string) {
+    const tokenHash = this.hashToken(token);
+    const record = await this.resetTokenRepo.findOne({
+      where: { tokenHash },
+      relations: ['user'],
+    });
+
+    if (!record || record.usedAt) {
+      throw new BadRequestException('Invalid or used reset token');
+    }
+
+    if (record.expiresAt.getTime() < Date.now()) {
+      throw new BadRequestException('Reset token expired');
+    }
+
+    const passwordHash = await bcrypt.hash(newPassword, 10);
+    record.user.passwordHash = passwordHash;
+    await this.usersRepo.save(record.user);
+
+    record.usedAt = new Date();
+    await this.resetTokenRepo.save(record);
+
+    return { ok: true };
   }
 
   async handleGoogleLogin(googleUser: {

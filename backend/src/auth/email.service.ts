@@ -36,4 +36,14 @@ export class EmailService {
       html: `<p>Use this link to sign in:</p><p><a href="${link}">${link}</a></p>`,
     });
   }
+
+  async sendPasswordReset(to: string, link: string) {
+    await this.transporter.sendMail({
+      from: this.fromAddress,
+      to,
+      subject: 'Reset your password',
+      text: `Reset your password using this link: ${link}`,
+      html: `<p>Reset your password using this link:</p><p><a href="${link}">${link}</a></p>`,
+    });
+  }
 }

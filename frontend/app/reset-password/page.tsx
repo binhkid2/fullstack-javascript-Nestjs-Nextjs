@@ -1,9 +1,9 @@
 import { Suspense } from 'react';
-import VerifyClient from './VerifyClient';
+import ResetPasswordClient from './ResetPasswordClient';
 
 export const dynamic = 'force-dynamic';
 
-export default function VerifyPage() {
+export default function ResetPasswordPage() {
   return (
     <main className="min-h-screen px-6 py-16">
       <Suspense
@@ -13,7 +13,7 @@ export default function VerifyPage() {
           </div>
         }
       >
-        <VerifyClient />
+        <ResetPasswordClient />
       </Suspense>
     </main>
   );

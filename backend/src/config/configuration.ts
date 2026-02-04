@@ -31,6 +31,12 @@ export default () => ({
       process.env.APP_BASE_URL ??
       'http://localhost:3001',
   },
+  passwordReset: {
+    ttlSeconds: parseInt(
+      process.env.RESET_PASSWORD_TOKEN_TTL_SECONDS ?? '900',
+      10,
+    ),
+  },
   email: {
     host: process.env.EMAIL_SERVER_HOST ?? '',
     port: parseInt(process.env.EMAIL_SERVER_PORT ?? '587', 10),

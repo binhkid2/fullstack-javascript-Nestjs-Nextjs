@@ -18,7 +18,7 @@ export default function Home() {
         </p>
         <div className="mt-8">
           <Link
-            href="/login"
+            href="/auth"
             className="inline-flex items-center rounded-xl bg-black px-6 py-3 text-sm font-semibold text-white transition hover:bg-gray-800"
           >
             Get Started

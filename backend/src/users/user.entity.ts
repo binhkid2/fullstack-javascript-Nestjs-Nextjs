@@ -25,6 +25,9 @@ export class User {
   @Column({ type: 'enum', enum: Role, default: Role.MEMBER })
   role!: Role;
 
+  @Column({ type: 'varchar', nullable: true })
+  passwordHash?: string | null;
+
   @Column({ default: true })
   isActive!: boolean;
 

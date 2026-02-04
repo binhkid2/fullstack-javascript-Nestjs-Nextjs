@@ -19,6 +19,10 @@ import { AuthService } from './auth.service';
 import { MagicLinkRequestDto } from './dto/magic-link-request.dto';
 import { MagicLinkVerifyDto } from './dto/magic-link-verify.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { RegisterDto } from './dto/register.dto';
+import { LoginDto } from './dto/login.dto';
+import { PasswordResetRequestDto } from './dto/password-reset-request.dto';
+import { PasswordResetDto } from './dto/password-reset.dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -38,6 +42,30 @@ export class AuthController {
   @ApiQuery({ name: 'token', required: true })
   verifyMagicLink(@Query() dto: MagicLinkVerifyDto) {
     return this.authService.verifyMagicLink(dto.email, dto.token);
+  }
+
+  @Post('register')
+  @ApiOperation({ summary: 'Register with email and password' })
+  register(@Body() dto: RegisterDto) {
+    return this.authService.registerWithPassword(dto.email, dto.password, dto.name);
+  }
+
+  @Post('login')
+  @ApiOperation({ summary: 'Login with email and password' })
+  login(@Body() dto: LoginDto) {
+    return this.authService.loginWithPassword(dto.email, dto.password);
+  }
+
+  @Post('forgot-password')
+  @ApiOperation({ summary: 'Request password reset' })
+  requestPasswordReset(@Body() dto: PasswordResetRequestDto) {
+    return this.authService.requestPasswordReset(dto.email);
+  }
+
+  @Post('reset-password')
+  @ApiOperation({ summary: 'Reset password' })
+  resetPassword(@Body() dto: PasswordResetDto) {
+    return this.authService.resetPassword(dto.token, dto.password);
   }
 
   @Get('google')

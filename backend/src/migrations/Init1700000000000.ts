@@ -16,6 +16,7 @@ export class Init1700000000000 implements MigrationInterface {
         "email" character varying NOT NULL,
         "name" character varying,
         "role" "public"."users_role_enum" NOT NULL DEFAULT 'MEMBER',
+        "passwordHash" character varying,
         "isActive" boolean NOT NULL DEFAULT true,
         "createdAt" TIMESTAMPTZ NOT NULL DEFAULT now(),
         "updatedAt" TIMESTAMPTZ NOT NULL DEFAULT now(),
@@ -63,6 +64,18 @@ export class Init1700000000000 implements MigrationInterface {
       )
     `);
 
+    await queryRunner.query(`
+      CREATE TABLE "password_reset_tokens" (
+        "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
+        "tokenHash" character varying NOT NULL,
+        "expiresAt" TIMESTAMPTZ NOT NULL,
+        "usedAt" TIMESTAMPTZ,
+        "createdAt" TIMESTAMPTZ NOT NULL DEFAULT now(),
+        "userId" uuid,
+        CONSTRAINT "PK_password_reset_tokens_id" PRIMARY KEY ("id")
+      )
+    `);
+
     await queryRunner.query(
       `CREATE UNIQUE INDEX "IDX_oauth_provider_providerId" ON "oauth_accounts" ("provider", "providerId")`,
     );
@@ -87,9 +100,19 @@ export class Init1700000000000 implements MigrationInterface {
       FOREIGN KEY ("userId") REFERENCES "users"("id")
       ON DELETE CASCADE
     `);
+
+    await queryRunner.query(`
+      ALTER TABLE "password_reset_tokens"
+      ADD CONSTRAINT "FK_password_reset_tokens_user"
+      FOREIGN KEY ("userId") REFERENCES "users"("id")
+      ON DELETE CASCADE
+    `);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(
+      `ALTER TABLE "password_reset_tokens" DROP CONSTRAINT "FK_password_reset_tokens_user"`,
+    );
     await queryRunner.query(
       `ALTER TABLE "oauth_accounts" DROP CONSTRAINT "FK_oauth_accounts_user"`,
     );
@@ -102,6 +125,7 @@ export class Init1700000000000 implements MigrationInterface {
 
     await queryRunner.query(`DROP INDEX "IDX_oauth_provider_providerId"`);
     await queryRunner.query(`DROP TABLE "oauth_accounts"`);
+    await queryRunner.query(`DROP TABLE "password_reset_tokens"`);
     await queryRunner.query(`DROP TABLE "magic_link_tokens"`);
     await queryRunner.query(`DROP TABLE "refresh_tokens"`);
     await queryRunner.query(`DROP INDEX "IDX_users_email"`);
