@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { toast } from 'react-toastify';
+import { getPasswordErrors } from '../auth/passwordRules';
 
 export default function ResetPasswordClient() {
   const searchParams = useSearchParams();
@@ -12,6 +14,7 @@ export default function ResetPasswordClient() {
   const [error, setError] = useState<string | null>(null);
   const [status, setStatus] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -19,6 +22,13 @@ export default function ResetPasswordClient() {
     setError(null);
 
     try {
+      const passwordErrors = getPasswordErrors(password);
+      if (passwordErrors.length > 0) {
+        setError(passwordErrors[0]);
+        toast.error(passwordErrors[0]);
+        setLoading(false);
+        return;
+      }
       const response = await fetch('/api/reset-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -30,9 +40,12 @@ export default function ResetPasswordClient() {
       }
 
       setStatus('Password updated. You can sign in now.');
+      toast.success('Password updated. You can sign in now.');
       setTimeout(() => router.push('/auth?tab=signin'), 1200);
     } catch {
-      setError('Unable to reset password.');
+      const message = 'Unable to reset password.';
+      setError(message);
+      toast.error(message);
     } finally {
       setLoading(false);
     }
@@ -54,15 +67,27 @@ export default function ResetPasswordClient() {
       <form onSubmit={onSubmit} className="mt-6 space-y-4">
         <label className="block text-sm font-medium text-gray-700">
           New password
-          <input
-            type="password"
-            required
-            minLength={8}
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            className="mt-2 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-gray-900 outline-none transition focus:border-gray-400"
-          />
+          <div className="mt-2 flex items-center gap-2">
+            <input
+              type={showPassword ? 'text' : 'password'}
+              required
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-gray-900 outline-none transition focus:border-gray-400"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((prev) => !prev)}
+              className="rounded-xl border border-gray-200 px-3 py-2 text-xs font-semibold text-gray-600"
+            >
+              {showPassword ? 'Hide' : 'Show'}
+            </button>
+          </div>
         </label>
+        <p className="text-xs text-gray-500">
+          Must be 8+ chars, include upper/lowercase, number, and special
+          character.
+        </p>
         <button
           type="submit"
           disabled={loading}

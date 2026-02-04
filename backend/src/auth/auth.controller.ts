@@ -46,18 +46,21 @@ export class AuthController {
 
   @Post('register')
   @ApiOperation({ summary: 'Register with email and password' })
+  @Throttle({ default: { limit: 5, ttl: 60 } })
   register(@Body() dto: RegisterDto) {
     return this.authService.registerWithPassword(dto.email, dto.password, dto.name);
   }
 
   @Post('login')
   @ApiOperation({ summary: 'Login with email and password' })
+  @Throttle({ default: { limit: 10, ttl: 60 } })
   login(@Body() dto: LoginDto) {
     return this.authService.loginWithPassword(dto.email, dto.password);
   }
 
   @Post('forgot-password')
   @ApiOperation({ summary: 'Request password reset' })
+  @Throttle({ default: { limit: 5, ttl: 60 } })
   requestPasswordReset(@Body() dto: PasswordResetRequestDto) {
     return this.authService.requestPasswordReset(dto.email);
   }

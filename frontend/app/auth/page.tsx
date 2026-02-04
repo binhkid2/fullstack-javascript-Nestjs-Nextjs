@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { signIn } from 'next-auth/react';
+import { toast } from 'react-toastify';
+import { getPasswordErrors } from './passwordRules';
 
 const tabs = ['signin', 'signup', 'reset'] as const;
 
@@ -18,6 +20,7 @@ export default function AuthPage() {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [name, setName] = useState('');
   const [status, setStatus] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -46,7 +49,9 @@ export default function AuthPage() {
 
       router.push('/check-email');
     } catch {
-      setError('Unable to send magic link. Please try again.');
+      const message = 'Unable to send magic link. Please try again.';
+      setError(message);
+      toast.error(message);
     } finally {
       setLoading(false);
     }
@@ -65,7 +70,9 @@ export default function AuthPage() {
     });
 
     if (result?.error) {
-      setError('Invalid email or password.');
+      const message = 'Invalid email or password.';
+      setError(message);
+      toast.error(message);
       setLoading(false);
     }
   };
@@ -76,6 +83,13 @@ export default function AuthPage() {
     setError(null);
 
     try {
+      const passwordErrors = getPasswordErrors(password);
+      if (passwordErrors.length > 0) {
+        setError(passwordErrors[0]);
+        toast.error(passwordErrors[0]);
+        setLoading(false);
+        return;
+      }
       const response = await fetch('/api/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -87,9 +101,12 @@ export default function AuthPage() {
       }
 
       setStatus('Account created. Please sign in.');
+      toast.success('Account created. Please sign in.');
       goToTab('signin');
     } catch {
-      setError('Unable to create account.');
+      const message = 'Unable to create account.';
+      setError(message);
+      toast.error(message);
     } finally {
       setLoading(false);
     }
@@ -112,8 +129,11 @@ export default function AuthPage() {
       }
 
       setStatus('If that email exists, we sent a reset link.');
+      toast.success('If that email exists, we sent a reset link.');
     } catch {
-      setError('Unable to request password reset.');
+      const message = 'Unable to request password reset.';
+      setError(message);
+      toast.error(message);
     } finally {
       setLoading(false);
     }
@@ -176,14 +196,23 @@ export default function AuthPage() {
             </label>
             <label className="block text-sm font-medium text-gray-700">
               Password
-              <input
-                type="password"
-                required
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-                placeholder="Enter your password"
-                className="mt-2 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-gray-900 outline-none transition focus:border-gray-400"
-              />
+              <div className="mt-2 flex items-center gap-2">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  required
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
+                  placeholder="Enter your password"
+                  className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-gray-900 outline-none transition focus:border-gray-400"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  className="rounded-xl border border-gray-200 px-3 py-2 text-xs font-semibold text-gray-600"
+                >
+                  {showPassword ? 'Hide' : 'Show'}
+                </button>
+              </div>
             </label>
             <button
               type="submit"
@@ -228,16 +257,28 @@ export default function AuthPage() {
             </label>
             <label className="block text-sm font-medium text-gray-700">
               Password
-              <input
-                type="password"
-                required
-                minLength={8}
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-                placeholder="Create a password"
-                className="mt-2 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-gray-900 outline-none transition focus:border-gray-400"
-              />
+              <div className="mt-2 flex items-center gap-2">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  required
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
+                  placeholder="Create a password"
+                  className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-gray-900 outline-none transition focus:border-gray-400"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  className="rounded-xl border border-gray-200 px-3 py-2 text-xs font-semibold text-gray-600"
+                >
+                  {showPassword ? 'Hide' : 'Show'}
+                </button>
+              </div>
             </label>
+            <p className="text-xs text-gray-500">
+              Must be 8+ chars, include upper/lowercase, number, and special
+              character.
+            </p>
             <button
               type="submit"
               disabled={loading}
