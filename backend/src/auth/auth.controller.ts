@@ -5,6 +5,7 @@ import {
   Post,
   Query,
   Req,
+  Res,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -15,6 +16,8 @@ import {
 } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { Throttle } from '@nestjs/throttler';
+import { ConfigService } from '@nestjs/config';
+import type { Response } from 'express';
 import { AuthService } from './auth.service';
 import { MagicLinkRequestDto } from './dto/magic-link-request.dto';
 import { MagicLinkVerifyDto } from './dto/magic-link-verify.dto';
@@ -27,7 +30,10 @@ import { PasswordResetDto } from './dto/password-reset.dto';
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly configService: ConfigService,
+  ) {}
 
   @Post('magic-link')
   @Throttle({ default: { limit: 5, ttl: 60 } })
@@ -81,12 +87,27 @@ export class AuthController {
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
   @ApiOperation({ summary: 'Google OAuth callback' })
-  googleCallback(@Req() req: any) {
-    return this.authService.handleGoogleLogin({
+  async googleCallback(@Req() req: any, @Res() res: Response) {
+    const payload = await this.authService.handleGoogleLogin({
       providerId: req.user.providerId,
       email: req.user.email,
       name: req.user.name,
     });
+
+    const baseUrl =
+      this.configService.get<string>('magicLink.baseUrl') ??
+      this.configService.get<string>('app.baseUrl') ??
+      'http://localhost:3001';
+
+    const url = new URL('/oauth/google', baseUrl);
+    url.searchParams.set('accessToken', payload.accessToken);
+    url.searchParams.set('refreshToken', payload.refreshToken);
+    url.searchParams.set('email', payload.user.email);
+    url.searchParams.set('name', payload.user.name ?? '');
+    url.searchParams.set('role', payload.user.role);
+    url.searchParams.set('id', payload.user.id);
+
+    return res.redirect(url.toString());
   }
 
   @Post('refresh')

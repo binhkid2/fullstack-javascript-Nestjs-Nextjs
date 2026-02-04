@@ -244,7 +244,16 @@ export class AuthService {
       await this.oauthRepo.save(account);
     }
 
-    return this.issueTokens(account.user);
+    const tokens = await this.issueTokens(account.user);
+    return {
+      ...tokens,
+      user: {
+        id: account.user.id,
+        email: account.user.email,
+        name: account.user.name ?? null,
+        role: account.user.role,
+      },
+    };
   }
 
   async refreshTokens(refreshToken: string) {

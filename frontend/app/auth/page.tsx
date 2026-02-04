@@ -57,6 +57,12 @@ export default function AuthPage() {
     }
   };
 
+  const handleGoogleLogin = () => {
+    const apiUrl =
+      process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000';
+    window.location.href = `${apiUrl}/auth/google`;
+  };
+
   const handleSignIn = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setLoading(true);
@@ -239,6 +245,13 @@ export default function AuthPage() {
               className="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm font-semibold text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-60"
             >
               Send magic link
+            </button>
+            <button
+              type="button"
+              onClick={handleGoogleLogin}
+              className="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
+            >
+              Continue with Google
             </button>
           </form>
         ) : null}

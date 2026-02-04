@@ -4,6 +4,39 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
+      id: 'google-oauth',
+      name: 'Google OAuth',
+      credentials: {
+        accessToken: { label: 'Access token', type: 'text' },
+        refreshToken: { label: 'Refresh token', type: 'text' },
+        email: { label: 'Email', type: 'email' },
+        name: { label: 'Name', type: 'text' },
+        role: { label: 'Role', type: 'text' },
+        id: { label: 'User id', type: 'text' },
+      },
+      async authorize(credentials) {
+        const accessToken = credentials?.accessToken?.toString() ?? '';
+        const refreshToken = credentials?.refreshToken?.toString() ?? '';
+        const email = credentials?.email?.toString() ?? '';
+        const name = credentials?.name?.toString() ?? null;
+        const role = credentials?.role?.toString() ?? 'MEMBER';
+        const id = credentials?.id?.toString() ?? email;
+
+        if (!accessToken || !refreshToken || !email) {
+          return null;
+        }
+
+        return {
+          id,
+          email,
+          name,
+          role,
+          accessToken,
+          refreshToken,
+        };
+      },
+    }),
+    CredentialsProvider({
       id: 'magic-link',
       name: 'Magic Link',
       credentials: {
