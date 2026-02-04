@@ -26,6 +26,10 @@ export default () => ({
   magicLink: {
     ttlSeconds: parseInt(process.env.MAGIC_LINK_TOKEN_TTL_SECONDS ?? '900', 10),
     emailFrom: process.env.MAGIC_LINK_EMAIL_FROM ?? 'no-reply@example.com',
+    baseUrl:
+      process.env.MAGIC_LINK_BASE_URL ??
+      process.env.APP_BASE_URL ??
+      'http://localhost:3001',
   },
   email: {
     host: process.env.EMAIL_SERVER_HOST ?? '',

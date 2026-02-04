@@ -7,6 +7,8 @@ import { MagicLinkToken } from './auth/entities/magic-link-token.entity';
 import { OAuthAccount } from './auth/entities/oauth-account.entity';
 
 const config = configuration();
+const isProd = process.env.NODE_ENV === 'production';
+const migrations = [isProd ? 'dist/migrations/*.js' : 'src/migrations/*.ts'];
 
 export default new DataSource({
   type: 'postgres',
@@ -17,6 +19,6 @@ export default new DataSource({
   database: config.db.name,
   ssl: config.db.ssl ? { rejectUnauthorized: false } : false,
   entities: [User, RefreshToken, MagicLinkToken, OAuthAccount],
-  migrations: ['src/migrations/*.ts'],
+  migrations,
   synchronize: false,
 });

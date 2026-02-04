@@ -52,8 +52,10 @@ export class AuthService {
     });
     await this.magicLinkRepo.save(magicLink);
 
-    const baseUrl = this.configService.get<string>('app.baseUrl');
-    const link = `${baseUrl}/auth/magic-link/verify?email=${encodeURIComponent(
+    const baseUrl =
+      this.configService.get<string>('magicLink.baseUrl') ??
+      this.configService.get<string>('app.baseUrl');
+    const link = `${baseUrl}/verify?email=${encodeURIComponent(
       user.email,
     )}&token=${token}`;
 
@@ -92,7 +94,16 @@ export class AuthService {
     magicLink.usedAt = new Date();
     await this.magicLinkRepo.save(magicLink);
 
-    return this.issueTokens(user);
+    const tokens = await this.issueTokens(user);
+    return {
+      ...tokens,
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name ?? null,
+        role: user.role,
+      },
+    };
   }
 
   async handleGoogleLogin(googleUser: {
