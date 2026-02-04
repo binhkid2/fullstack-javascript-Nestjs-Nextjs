@@ -13,6 +13,8 @@ import { RefreshToken } from './auth/entities/refresh-token.entity';
 import { MagicLinkToken } from './auth/entities/magic-link-token.entity';
 import { OAuthAccount } from './auth/entities/oauth-account.entity';
 import { PasswordResetToken } from './auth/entities/password-reset-token.entity';
+import { BlogPostsModule } from './blog-posts/blog-posts.module';
+import { BlogPost } from './blog-posts/blog-post.entity';
 
 @Module({
   imports: [
@@ -36,6 +38,7 @@ import { PasswordResetToken } from './auth/entities/password-reset-token.entity'
           MagicLinkToken,
           OAuthAccount,
           PasswordResetToken,
+          BlogPost,
         ],
         synchronize: false,
         logging: false,
@@ -44,6 +47,7 @@ import { PasswordResetToken } from './auth/entities/password-reset-token.entity'
     UsersModule,
     AuthModule,
     HealthModule,
+    BlogPostsModule,
   ],
   providers: [
     {

@@ -62,17 +62,28 @@ export default function AuthPage() {
     setLoading(true);
     setError(null);
 
-    const result = await signIn('password', {
-      redirect: true,
-      callbackUrl: '/dashboard',
-      email,
-      password,
-    });
+    try {
+      const result = await signIn('password', {
+        redirect: false,
+        callbackUrl: '/dashboard',
+        email,
+        password,
+      });
 
-    if (result?.error) {
-      const message = 'Invalid email or password.';
+      if (result?.error || !result?.ok) {
+        const message = 'Invalid email or password.';
+        setError(message);
+        toast.error(message);
+        return;
+      }
+
+      toast.success('Signed in successfully.');
+      router.push(result.url ?? '/dashboard');
+    } catch {
+      const message = 'Unable to sign in.';
       setError(message);
       toast.error(message);
+    } finally {
       setLoading(false);
     }
   };

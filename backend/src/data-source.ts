@@ -6,6 +6,7 @@ import { RefreshToken } from './auth/entities/refresh-token.entity';
 import { MagicLinkToken } from './auth/entities/magic-link-token.entity';
 import { OAuthAccount } from './auth/entities/oauth-account.entity';
 import { PasswordResetToken } from './auth/entities/password-reset-token.entity';
+import { BlogPost } from './blog-posts/blog-post.entity';
 
 const config = configuration();
 const isProd = process.env.NODE_ENV === 'production';
@@ -19,7 +20,14 @@ export default new DataSource({
   password: config.db.password,
   database: config.db.name,
   ssl: config.db.ssl ? { rejectUnauthorized: false } : false,
-  entities: [User, RefreshToken, MagicLinkToken, OAuthAccount, PasswordResetToken],
+  entities: [
+    User,
+    RefreshToken,
+    MagicLinkToken,
+    OAuthAccount,
+    PasswordResetToken,
+    BlogPost,
+  ],
   migrations,
   synchronize: false,
 });
