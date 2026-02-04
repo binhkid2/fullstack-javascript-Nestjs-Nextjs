@@ -15,6 +15,7 @@ export class BlogPostsService {
   findAll(): Promise<BlogPost[]> {
     return this.blogPostsRepository.find({
       order: { createdAt: 'DESC' },
+      relations: ['author'],
     });
   }
 

@@ -18,6 +18,11 @@ type BlogPost = {
   content: string;
   contentFormat: ContentFormat;
   authorId?: string | null;
+  author?: {
+    id: string;
+    email: string;
+    name?: string | null;
+  } | null;
   createdAt: string;
   updatedAt: string;
   publishedAt?: string | null;
@@ -253,7 +258,7 @@ export default function DashboardClient({ userEmail, userRole }: Props) {
                       {new Date(post.updatedAt).toLocaleString()}
                     </td>
                     <td className="py-4 pr-4 text-xs text-gray-500">
-                      {post.authorId ?? '—'}
+                      {post.author?.email ?? post.authorId ?? '—'}
                     </td>
                     <td className="py-4 pr-4">
                       <div className="flex items-center gap-2">

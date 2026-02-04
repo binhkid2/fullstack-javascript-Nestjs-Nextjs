@@ -4,9 +4,12 @@ import {
   CreateDateColumn,
   Entity,
   Index,
+  ManyToOne,
+  JoinColumn,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { User } from '../users/user.entity';
 
 export enum PostStatus {
   DRAFT = 'draft',
@@ -64,6 +67,10 @@ export class BlogPost {
 
   @Column({ name: 'author_id', type: 'uuid', nullable: true })
   authorId?: string | null;
+
+  @ManyToOne(() => User, { nullable: true })
+  @JoinColumn({ name: 'author_id' })
+  author?: User | null;
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
   createdAt!: Date;
