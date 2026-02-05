@@ -5,8 +5,8 @@ import Providers from './providers';
 import { ToastContainer } from 'react-toastify';
 
 export const metadata = {
-  title: 'Magic Link Auth',
-  description: 'Simple Next.js app with magic link login',
+  title: 'Duc Binh full stack javascript project',
+  description: ' Nestjs + Next.js blogs app',
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

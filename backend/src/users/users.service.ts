@@ -51,6 +51,43 @@ export class UsersService {
     return this.usersRepo.save(user);
   }
 
+  listUsers() {
+    return this.usersRepo.find({
+      order: { createdAt: 'DESC' },
+    });
+  }
+
+  async updateUser(
+    id: string,
+    updates: { name?: string | null; email?: string; role?: Role },
+  ) {
+    const user = await this.findById(id);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    if (updates.email && updates.email !== user.email) {
+      const existing = await this.findByEmail(updates.email);
+      if (existing && existing.id !== user.id) {
+        throw new BadRequestException('Email already in use');
+      }
+    }
+
+    if (updates.name !== undefined) {
+      user.name = updates.name ?? undefined;
+    }
+
+    if (updates.email !== undefined) {
+      user.email = updates.email;
+    }
+
+    if (updates.role !== undefined) {
+      user.role = updates.role;
+    }
+
+    return this.usersRepo.save(user);
+  }
+
   async ensureAdminSeed(email: string, password: string, name?: string) {
     const existing = await this.findByEmail(email);
     if (existing) {

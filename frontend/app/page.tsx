@@ -44,14 +44,16 @@ export default async function Home() {
           Welcome
         </p>
         <h1 className="mt-4 text-4xl font-semibold text-gray-900">
-          Simple secure sign-in
+          This is full stack javascript project
         </h1>
         <p className="mt-4 text-lg text-gray-600">
-          Use a magic link to access your account without passwords or friction.
+          It use nest js for backend,Next js for frontend
         </p>
-        <p className="mt-2 text-gray-600">
-          We will send a one-time sign-in link straight to your inbox.
-        </p>
+        <ul className="space-y-3 text-sm text-gray-800">
+<li className="flex items-center gap-2">🔐 <span>JWT sessions with refresh tokens</span></li>
+<li className="flex items-center gap-2">🛡️ <span>RBAC: ADMIN · MANAGER · MEMBER</span></li>
+<li className="flex items-center gap-2">📝 <span>Blog CRUD with strict permissions</span></li>
+</ul>
         <div className="mt-8">
           <Link
             href="/auth"

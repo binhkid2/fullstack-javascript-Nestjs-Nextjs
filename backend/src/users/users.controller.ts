@@ -7,6 +7,7 @@ import { Role } from '../roles/role.enum';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserRoleDto } from './dto/update-user-role.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @ApiTags('users')
 @Controller('users')
@@ -43,6 +44,23 @@ export class UsersController {
     };
   }
 
+  @Get()
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'List users (admin only)' })
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
+  async listUsers() {
+    const users = await this.usersService.listUsers();
+    return users.map((user) => ({
+      id: user.id,
+      email: user.email,
+      name: user.name ?? null,
+      role: user.role,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    }));
+  }
+
   @Patch(':id/role')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Update user role (admin only)' })
@@ -50,6 +68,23 @@ export class UsersController {
   @Roles(Role.ADMIN)
   async updateRole(@Param('id') id: string, @Body() dto: UpdateUserRoleDto) {
     const user = await this.usersService.updateRole(id, dto.role);
+    return {
+      id: user.id,
+      email: user.email,
+      name: user.name ?? null,
+      role: user.role,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    };
+  }
+
+  @Patch(':id')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Update user profile (admin only)' })
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
+  async updateUser(@Param('id') id: string, @Body() dto: UpdateUserDto) {
+    const user = await this.usersService.updateUser(id, dto);
     return {
       id: user.id,
       email: user.email,
