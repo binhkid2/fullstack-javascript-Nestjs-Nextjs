@@ -4,12 +4,9 @@
             "ssh": "Disabled",
             "previewLimit": 50,
             "server": "localhost",
-            "port": 5432,
             "driver": "PostgreSQL",
-            "name": "asadsad",
-            "database": "nestjs_db",
-            "username": "postgres",
-            "password": "postgres"
+            "name": "aaa",
+            "connectString": "postgresql://binhdz:whatever@162.43.15.117:5445/boilerplate"
         }
     ]
 }

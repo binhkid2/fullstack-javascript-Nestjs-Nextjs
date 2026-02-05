@@ -19,6 +19,35 @@ export class BlogPostsService {
     });
   }
 
+  findPublished(): Promise<BlogPost[]> {
+    return this.blogPostsRepository
+      .createQueryBuilder('post')
+      .where('(post.status = :status OR post.published_at IS NOT NULL)', {
+        status: PostStatus.PUBLISHED,
+      })
+      .andWhere('post.slug IS NOT NULL')
+      .andWhere("post.slug <> ''")
+      .orderBy('post.published_at', 'DESC')
+      .addOrderBy('post.created_at', 'DESC')
+      .getMany();
+  }
+
+  async findPublishedBySlug(slug: string): Promise<BlogPost> {
+    const post = await this.blogPostsRepository
+      .createQueryBuilder('post')
+      .where('LOWER(post.slug) = LOWER(:slug)', { slug })
+      .andWhere('(post.status = :status OR post.published_at IS NOT NULL)', {
+        status: PostStatus.PUBLISHED,
+      })
+      .getOne();
+
+    if (!post) {
+      throw new NotFoundException('Blog post not found');
+    }
+
+    return post;
+  }
+
   async create(dto: CreateBlogPostDto, authorId?: string): Promise<BlogPost> {
     const post = this.blogPostsRepository.create({
       title: dto.title.trim(),

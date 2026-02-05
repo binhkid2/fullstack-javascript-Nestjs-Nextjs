@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { signIn } from 'next-auth/react';
+import { signIn, useSession } from 'next-auth/react';
 import { toast } from 'react-toastify';
 import { getPasswordErrors } from './passwordRules';
 
@@ -11,6 +11,7 @@ const tabs = ['signin', 'signup', 'reset'] as const;
 type Tab = (typeof tabs)[number];
 
 export default function AuthPage() {
+  const { status: sessionStatus } = useSession();
   const searchParams = useSearchParams();
   const router = useRouter();
   const initialTab = (searchParams.get('tab') as Tab) || 'signin';
@@ -25,6 +26,12 @@ export default function AuthPage() {
   const [status, setStatus] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (sessionStatus === 'authenticated') {
+      router.replace('/dashboard');
+    }
+  }, [sessionStatus, router]);
 
   const goToTab = (next: Tab) => {
     setTab(next);

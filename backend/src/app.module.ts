@@ -24,11 +24,7 @@ import { BlogPost } from './blog-posts/blog-post.entity';
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         type: 'postgres',
-        host: configService.get<string>('db.host'),
-        port: configService.get<number>('db.port'),
-        username: configService.get<string>('db.username'),
-        password: configService.get<string>('db.password'),
-        database: configService.get<string>('db.name'),
+        url: configService.get<string>('db.url'),
         ssl: configService.get<boolean>('db.ssl')
           ? { rejectUnauthorized: false }
           : false,

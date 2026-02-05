@@ -78,6 +78,7 @@ This is created in `backend/src/main.ts` via `UsersService.ensureAdminSeed(...)`
 # HOW to start project using docker compose
 ### * fill .env in root then run
 ```
-docker compose build --no-cache                         
-docker compose up 
+docker compose down --volumes
+docker compose build --no-cache
+docker compose up --force-recreate
 ```

@@ -1,8 +1,8 @@
 #!/bin/sh
 set -e
 
-if [ -z "$DB_HOST" ]; then
-  echo "DB_HOST is not set. Exiting."
+if [ -z "$DATABASE_URL" ]; then
+  echo "DATABASE_URL is not set. Exiting."
   exit 1
 fi
 
