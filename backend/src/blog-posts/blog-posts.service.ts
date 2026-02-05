@@ -22,9 +22,7 @@ export class BlogPostsService {
   findPublished(): Promise<BlogPost[]> {
     return this.blogPostsRepository
       .createQueryBuilder('post')
-      .where('(post.status = :status OR post.published_at IS NOT NULL)', {
-        status: PostStatus.PUBLISHED,
-      })
+      .where('post.status = :status', { status: PostStatus.PUBLISHED })
       .andWhere('post.slug IS NOT NULL')
       .andWhere("post.slug <> ''")
       .orderBy('post.published_at', 'DESC')
@@ -36,9 +34,7 @@ export class BlogPostsService {
     const post = await this.blogPostsRepository
       .createQueryBuilder('post')
       .where('LOWER(post.slug) = LOWER(:slug)', { slug })
-      .andWhere('(post.status = :status OR post.published_at IS NOT NULL)', {
-        status: PostStatus.PUBLISHED,
-      })
+      .andWhere('post.status = :status', { status: PostStatus.PUBLISHED })
       .getOne();
 
     if (!post) {
@@ -57,6 +53,9 @@ export class BlogPostsService {
       contentFormat: dto.contentFormat ?? ContentFormat.MARKDOWN,
       status: PostStatus.DRAFT,
       authorId: authorId ?? null,
+      featuredImage: dto.featuredImage ?? null,
+      categories: dto.categories ?? [],
+      tags: dto.tags ?? [],
     });
 
     return this.blogPostsRepository.save(post);
@@ -95,6 +94,18 @@ export class BlogPostsService {
 
     if (dto.publishedAt !== undefined) {
       post.publishedAt = dto.publishedAt ? new Date(dto.publishedAt) : null;
+    }
+
+    if (dto.featuredImage !== undefined) {
+      post.featuredImage = dto.featuredImage ?? null;
+    }
+
+    if (dto.categories !== undefined) {
+      post.categories = dto.categories;
+    }
+
+    if (dto.tags !== undefined) {
+      post.tags = dto.tags;
     }
 
     if (post.status === PostStatus.PUBLISHED && !post.publishedAt) {

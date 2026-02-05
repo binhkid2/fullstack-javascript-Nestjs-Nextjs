@@ -22,6 +22,12 @@ export enum ContentFormat {
   HTML = 'html',
 }
 
+export type FeaturedImage = {
+  id: string;
+  url: string;
+  alt?: string | null;
+};
+
 @Entity('blog_posts')
 @Index('idx_blog_posts_status_created_at', ['status', 'createdAt'])
 @Index('idx_blog_posts_published_at', ['publishedAt'])
@@ -67,6 +73,15 @@ export class BlogPost {
 
   @Column({ name: 'author_id', type: 'uuid', nullable: true })
   authorId?: string | null;
+
+  @Column({ name: 'featured_image', type: 'jsonb', nullable: true })
+  featuredImage?: FeaturedImage | null;
+
+  @Column({ type: 'text', array: true, default: () => "'{}'" })
+  categories!: string[];
+
+  @Column({ type: 'text', array: true, default: () => "'{}'" })
+  tags!: string[];
 
   @ManyToOne(() => User, { nullable: true })
   @JoinColumn({ name: 'author_id' })

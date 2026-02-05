@@ -47,6 +47,16 @@ export default async function BlogDetailPage({ params }: { params: any }) {
         <h1 className="mt-4 text-4xl font-semibold text-gray-900">
           {post.title}
         </h1>
+        {post.featuredImage?.url ? (
+          <div className="mt-6 overflow-hidden rounded-2xl border border-gray-100 bg-gray-50">
+            <img
+              src={post.featuredImage.url}
+              alt={post.featuredImage.alt ?? post.title}
+              className="h-64 w-full object-cover"
+              loading="lazy"
+            />
+          </div>
+        ) : null}
         {post.excerpt ? (
           <p className="mt-4 text-lg text-gray-600">{post.excerpt}</p>
         ) : null}
@@ -54,6 +64,27 @@ export default async function BlogDetailPage({ params }: { params: any }) {
           <p className="mt-2 text-xs uppercase tracking-[0.3em] text-gray-400">
             Published {new Date(post.publishedAt).toLocaleDateString()}
           </p>
+        ) : null}
+
+        {post.categories?.length || post.tags?.length ? (
+          <div className="mt-6 flex flex-wrap gap-2 text-xs uppercase tracking-[0.2em] text-gray-500">
+            {post.categories?.map((category: string) => (
+              <span
+                key={`cat-${category}`}
+                className="rounded-full border border-gray-200 px-3 py-1"
+              >
+                {category}
+              </span>
+            ))}
+            {post.tags?.map((tag: string) => (
+              <span
+                key={`tag-${tag}`}
+                className="rounded-full border border-gray-200 px-3 py-1"
+              >
+                #{tag}
+              </span>
+            ))}
+          </div>
         ) : null}
 
         <div className="mt-8 text-gray-700">

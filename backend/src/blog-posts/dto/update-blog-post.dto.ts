@@ -1,11 +1,29 @@
 import {
+  IsArray,
   IsDateString,
   IsEnum,
+  IsObject,
   IsOptional,
   IsString,
   MaxLength,
+  ValidateNested,
 } from 'class-validator';
-import { ContentFormat, PostStatus } from '../blog-post.entity';
+import { ContentFormat, FeaturedImage, PostStatus } from '../blog-post.entity';
+import { Type } from 'class-transformer';
+
+class FeaturedImageDto implements FeaturedImage {
+  @IsString()
+  @IsOptional()
+  id!: string;
+
+  @IsString()
+  @IsOptional()
+  url!: string;
+
+  @IsOptional()
+  @IsString()
+  alt?: string | null;
+}
 
 export class UpdateBlogPostDto {
   @IsOptional()
@@ -38,4 +56,20 @@ export class UpdateBlogPostDto {
   @IsOptional()
   @IsDateString()
   publishedAt?: string | null;
+
+  @IsOptional()
+  @IsObject()
+  @ValidateNested()
+  @Type(() => FeaturedImageDto)
+  featuredImage?: FeaturedImageDto | null;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  categories?: string[];
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  tags?: string[];
 }

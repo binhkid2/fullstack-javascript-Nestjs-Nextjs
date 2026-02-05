@@ -9,6 +9,11 @@ type BlogPost = {
   title: string;
   slug: string;
   excerpt?: string | null;
+  featuredImage?: {
+    id: string;
+    url: string;
+    alt?: string | null;
+  } | null;
 };
 
 async function getPublishedPosts(): Promise<BlogPost[]> {
@@ -89,6 +94,16 @@ export default async function Home() {
                   href={`/blog/${post.slug}`}
                   className="group flex h-full flex-col rounded-2xl border border-gray-200 p-6 transition hover:-translate-y-1 hover:border-gray-300 hover:shadow-lg"
                 >
+                  {post.featuredImage?.url ? (
+                    <div className="mb-4 overflow-hidden rounded-xl border border-gray-100 bg-gray-50">
+                      <img
+                        src={post.featuredImage.url}
+                        alt={post.featuredImage.alt ?? post.title}
+                        className="h-40 w-full object-cover transition duration-300 group-hover:scale-105"
+                        loading="lazy"
+                      />
+                    </div>
+                  ) : null}
                   <h3 className="text-lg font-semibold text-gray-900 transition group-hover:text-black">
                     {post.title}
                   </h3>
