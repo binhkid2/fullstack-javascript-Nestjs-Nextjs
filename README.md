@@ -1,3 +1,8 @@
+## Docs
+
+- [Project guide](./GUIDE.md)
+- [Database schema](./backend/src/migrations/schema.md)
+
 ## Access Tokens (How to Get `accessToken`)
 
 You get an `accessToken` by authenticating against the backend. The backend returns

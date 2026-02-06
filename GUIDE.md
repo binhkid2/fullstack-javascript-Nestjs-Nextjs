@@ -94,18 +94,30 @@ Fields:
 **Public endpoints**
 - `GET /blog-posts/public`
   - returns only `status = published` and non-empty `slug`
+  - supports `page`, `pageSize`, `q`, `tags`, `category`, `sort`
+  - `sort` options: `newest` (default), `oldest`, `most_viewed`, `featured`
+  - `q` searches `title` + `excerpt` only
+  - `tags` and `category` accept comma-separated lists (multi-select)
+- `GET /blog-posts/public/featured?limit=6`
 - `GET /blog-posts/public/:slug`
   - returns single published post by slug
+- `POST /blog-posts/public/:slug/view`
+  - increments view count
 
 **Frontend pages**
 - `/` (landing)
-  - welcome card
-  - grid of published blogs (title + excerpt + featured image)
-  - if user is logged in: hide “Sign in” button
+  - Header/nav: logo, category links, search
+  - Featured section (hero + supporting cards)
+  - Blog grid with pagination (8 per page)
+  - Filters: multi-tag, categories, sort options
+  - Sidebar: popular posts (most viewed), newsletter, tags, ad placeholder
+  - Footer: about, contact, social links
+  - If user is logged in: hide “Sign in” button
 - `/blog/[slug]`
   - renders blog content
   - shows featured image
-  - displays categories/tags
+  - displays categories/tags and view count
+  - increments views on each visit
 
 ---
 
@@ -159,16 +171,18 @@ Fields:
 ## 8. Environment / Configuration
 
 Backend expects:
-- `DATABASE_URL` (remote Postgres)
+- `APP_PORT`, `APP_BASE_URL`
+- `DATABASE_URL` (Postgres)
 - `JWT_ACCESS_SECRET`, `JWT_REFRESH_SECRET`
 - `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_CALLBACK_URL`
 - `MAGIC_LINK_BASE_URL` (frontend URL)
+- optional: `DB_SSL`, email server variables for magic-link delivery
 
 Frontend expects:
 - `NEXTAUTH_URL`
 - `NEXTAUTH_SECRET`
 - `NEXT_PUBLIC_API_URL` (backend API URL)
-- `INTERNAL_API_URL` (Docker-to-Docker host, optional)
+- `INTERNAL_API_URL` (server-side API host; use `http://localhost:3000` when running separately)
 
 ---
 
@@ -178,6 +192,8 @@ Frontend expects:
 - Toasts show for errors/success
 - `/auth` redirects to `/dashboard` when already authenticated
 - `/` hides “Sign in” button if authenticated
+- `/` uses pagination (8 posts per page) and supports search + filters + sort
+- View counts increment on every blog detail visit
 
 ---
 
