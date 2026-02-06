@@ -61,8 +61,8 @@ erDiagram
     JSONB featured_image
     BOOLEAN is_featured
     INT views
-    TEXT[] categories
-    TEXT[] tags
+    TEXT_ARRAY categories
+    TEXT_ARRAY tags
     TIMESTAMPTZ created_at
     TIMESTAMPTZ updated_at
   }
