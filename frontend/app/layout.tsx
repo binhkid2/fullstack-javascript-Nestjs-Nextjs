@@ -3,6 +3,7 @@ import './globals.css';
 import 'react-toastify/dist/ReactToastify.css';
 import Providers from './providers';
 import { ToastContainer } from 'react-toastify';
+import SiteShell from './components/SiteShell';
 
 export const metadata = {
   title: "Duc Binh 's blog",
@@ -20,7 +21,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <body className="font-sans">
-        <Providers>{children}</Providers>
+        <Providers>
+          <SiteShell>{children}</SiteShell>
+        </Providers>
         <ToastContainer position="top-right" autoClose={4000} />
       </body>
     </html>
