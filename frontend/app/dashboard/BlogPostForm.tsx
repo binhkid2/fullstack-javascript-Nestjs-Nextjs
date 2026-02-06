@@ -15,6 +15,7 @@ type BlogPostDraft = {
   content: string;
   contentFormat: ContentFormat;
   status?: PostStatus;
+  isFeatured?: boolean;
   featuredImageId: string;
   featuredImageUrl: string;
   featuredImageAlt: string;
@@ -195,6 +196,23 @@ export default function BlogPostForm({
               ))}
             </select>
           </label>
+
+          {canEdit ? (
+            <label className="flex items-center gap-3 text-sm font-medium text-gray-700">
+              <input
+                type="checkbox"
+                checked={draft.isFeatured ?? false}
+                onChange={(event) =>
+                  onChange((prev) => ({
+                    ...prev,
+                    isFeatured: event.target.checked,
+                  }))
+                }
+                className="h-4 w-4 rounded border-gray-300"
+              />
+              Featured post
+            </label>
+          ) : null}
 
           {canEdit && editingId ? (
             <label className="block text-sm font-medium text-gray-700">

@@ -72,6 +72,12 @@ export class BlogPost {
   @Column({ name: 'featured_image', type: 'jsonb', nullable: true })
   featuredImage?: FeaturedImage | null;
 
+  @Column({ name: 'is_featured', type: 'boolean', default: false })
+  isFeatured!: boolean;
+
+  @Column({ type: 'int', default: 0 })
+  views!: number;
+
   @Column({ type: 'text', array: true, default: () => "'{}'" })
   categories!: string[];
 

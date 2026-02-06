@@ -1,5 +1,6 @@
 import {
   IsArray,
+  IsBoolean,
   IsEnum,
   IsObject,
   IsOptional,
@@ -51,6 +52,10 @@ export class UpdateBlogPostDto {
   @IsOptional()
   @IsEnum(PostStatus)
   status?: PostStatus;
+
+  @IsOptional()
+  @IsBoolean()
+  isFeatured?: boolean;
 
   @IsOptional()
   @IsObject()

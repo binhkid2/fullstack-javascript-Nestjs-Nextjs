@@ -5,8 +5,15 @@ import Providers from './providers';
 import { ToastContainer } from 'react-toastify';
 
 export const metadata = {
-  title: 'Duc Binh full stack javascript project',
+  title: "Duc Binh 's blog",
   description: ' Nestjs + Next.js blogs app',
+  openGraph: {
+    title: "Duc Binh 's blog",
+    description: ' Nestjs + Next.js blogs app',
+    images: [
+      'https://logos-world.net/wp-content/uploads/2021/08/Blogger-Logo-2010-2013.png',
+    ],
+  },
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/auth';
+import LandingControls from './LandingControls';
 
 export const dynamic = "force-dynamic";
 
@@ -16,14 +17,58 @@ type BlogPost = {
   } | null;
 };
 
-async function getPublishedPosts(): Promise<BlogPost[]> {
+type PublicPostsResponse = {
+  items: BlogPost[];
+  total: number;
+  page: number;
+  pageSize: number;
+};
+
+async function getPublishedPosts(query: {
+  page: number;
+  pageSize: number;
+  q?: string;
+  tags?: string;
+  category?: string;
+  sort?: string;
+}): Promise<PublicPostsResponse> {
   const apiUrl =
     process.env.INTERNAL_API_URL ??
     process.env.NEXT_PUBLIC_API_URL;
-  if (!apiUrl) return []; // avoid localhost fallback at build time
+  if (!apiUrl) {
+    return { items: [], total: 0, page: query.page, pageSize: query.pageSize };
+  }
 
   try {
-    const response = await fetch(`${apiUrl}/blog-posts/public`, {
+    const params = new URLSearchParams({
+      page: String(query.page),
+      pageSize: String(query.pageSize),
+    });
+    if (query.q) params.set('q', query.q);
+    if (query.tags) params.set('tags', query.tags);
+    if (query.category) params.set('category', query.category);
+    if (query.sort) params.set('sort', query.sort);
+
+    const response = await fetch(`${apiUrl}/blog-posts/public?${params.toString()}`, {
+      cache: "no-store",
+    });
+    if (!response.ok) {
+      return { items: [], total: 0, page: query.page, pageSize: query.pageSize };
+    }
+    return response.json();
+  } catch {
+    return { items: [], total: 0, page: query.page, pageSize: query.pageSize };
+  }
+}
+
+async function getFeaturedPosts(): Promise<BlogPost[]> {
+  const apiUrl =
+    process.env.INTERNAL_API_URL ??
+    process.env.NEXT_PUBLIC_API_URL;
+  if (!apiUrl) return [];
+
+  try {
+    const response = await fetch(`${apiUrl}/blog-posts/public/featured?limit=6`, {
       cache: "no-store",
     });
     if (!response.ok) return [];
@@ -32,9 +77,38 @@ async function getPublishedPosts(): Promise<BlogPost[]> {
     return [];
   }
 }
-export default async function Home() {
+
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  const resolvedParams = await searchParams;
   const session = await getServerSession(authOptions);
-  const posts = await getPublishedPosts();
+  const page = parseInt(
+    typeof resolvedParams.page === 'string' ? resolvedParams.page : '1',
+    10,
+  );
+  const pageSize = parseInt(
+    typeof resolvedParams.pageSize === 'string' ? resolvedParams.pageSize : '12',
+    10,
+  );
+  const q = typeof resolvedParams.q === 'string' ? resolvedParams.q : '';
+  const tags = typeof resolvedParams.tags === 'string' ? resolvedParams.tags : '';
+  const category =
+    typeof resolvedParams.category === 'string' ? resolvedParams.category : '';
+  const sort =
+    typeof resolvedParams.sort === 'string' ? resolvedParams.sort : 'newest';
+
+  const featuredPosts = await getFeaturedPosts();
+  const postsResponse = await getPublishedPosts({
+    page: Number.isNaN(page) ? 1 : Math.max(1, page),
+    pageSize: Number.isNaN(pageSize) ? 12 : Math.min(50, pageSize),
+    q: q || undefined,
+    tags: tags || undefined,
+    category: category || undefined,
+    sort,
+  });
 
   return (
     <main className="min-h-screen px-6 py-16">
@@ -68,10 +142,10 @@ export default async function Home() {
           <div className="flex items-center justify-between gap-4">
             <div>
               <p className="text-sm uppercase tracking-[0.3em] text-gray-500">
-                Blog
+                Featured
               </p>
               <h2 className="mt-3 text-3xl font-semibold text-gray-900">
-                Latest posts
+                Featured posts
               </h2>
             </div>
             {session ? null : (
@@ -84,13 +158,13 @@ export default async function Home() {
             )}
           </div>
 
-          {posts.length === 0 ? (
+          {featuredPosts.length === 0 ? (
             <p className="mt-6 text-sm text-gray-500">
-              No published posts yet.
+              No featured posts yet.
             </p>
           ) : (
             <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {posts.map((post) => (
+              {featuredPosts.map((post) => (
                 <Link
                   key={post.id}
                   href={`/blog/${post.slug}`}
@@ -99,7 +173,64 @@ export default async function Home() {
                   {post.featuredImage?.url ? (
                     <div className="mb-4 overflow-hidden rounded-xl border border-gray-100 bg-gray-50">
                       <img
-                        src={post.featuredImage.url}
+                        src={post.featuredImage.url || "/placeholder.svg"}
+                        alt={post.featuredImage.alt ?? post.title}
+                        className="h-40 w-full object-cover transition duration-300 group-hover:scale-105"
+                        loading="lazy"
+                      />
+                    </div>
+                  ) : null}
+                  <h3 className="text-lg font-semibold text-gray-900 transition group-hover:text-black">
+                    {post.title}
+                  </h3>
+                  <p className="mt-3 text-sm text-gray-600">
+                    {post.excerpt ?? 'Read the full story.'}
+                  </p>
+                  <span className="mt-auto pt-6 text-xs font-semibold uppercase tracking-[0.3em] text-gray-400">
+                    Read more
+                  </span>
+                </Link>
+              ))}
+            </div>
+          )}
+        </section>
+
+        <section className="rounded-3xl bg-white p-10 shadow-xl">
+          <div>
+            <p className="text-sm uppercase tracking-[0.3em] text-gray-500">
+              Blog
+            </p>
+            <h2 className="mt-3 text-3xl font-semibold text-gray-900">
+              Browse all posts
+            </h2>
+          </div>
+
+          <LandingControls
+            total={postsResponse.total}
+            page={postsResponse.page}
+            pageSize={postsResponse.pageSize}
+            q={q}
+            tags={tags}
+            category={category}
+            sort={sort}
+          />
+
+          {postsResponse.items.length === 0 ? (
+            <p className="mt-6 text-sm text-gray-500">
+              No published posts found.
+            </p>
+          ) : (
+            <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {postsResponse.items.map((post) => (
+                <Link
+                  key={post.id}
+                  href={`/blog/${post.slug}`}
+                  className="group flex h-full flex-col rounded-2xl border border-gray-200 p-6 transition hover:-translate-y-1 hover:border-gray-300 hover:shadow-lg"
+                >
+                  {post.featuredImage?.url ? (
+                    <div className="mb-4 overflow-hidden rounded-xl border border-gray-100 bg-gray-50">
+                      <img
+                        src={post.featuredImage.url || "/placeholder.svg"}
                         alt={post.featuredImage.alt ?? post.title}
                         className="h-40 w-full object-cover transition duration-300 group-hover:scale-105"
                         loading="lazy"

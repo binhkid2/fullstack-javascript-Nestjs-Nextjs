@@ -1,5 +1,6 @@
 import {
   IsArray,
+  IsBoolean,
   IsEnum,
   IsNotEmpty,
   IsObject,
@@ -48,6 +49,10 @@ export class CreateBlogPostDto {
   @IsOptional()
   @IsEnum(ContentFormat)
   contentFormat?: ContentFormat;
+
+  @IsOptional()
+  @IsBoolean()
+  isFeatured?: boolean;
 
   @IsOptional()
   @IsObject()

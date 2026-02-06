@@ -9,6 +9,9 @@ export class Init1700000000000 implements MigrationInterface {
     await queryRunner.query(
       `CREATE TYPE "public"."users_role_enum" AS ENUM ('ADMIN', 'MANAGER', 'MEMBER')`,
     );
+    await queryRunner.query(
+      `CREATE TYPE "public"."post_status" AS ENUM ('draft', 'published', 'archived')`,
+    );
 
     await queryRunner.query(`
       CREATE TABLE "users" (
@@ -76,8 +79,40 @@ export class Init1700000000000 implements MigrationInterface {
       )
     `);
 
+    await queryRunner.query(`
+      CREATE TABLE "blog_posts" (
+        "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
+        "title" character varying(255) NOT NULL,
+        "slug" character varying(255),
+        "status" "public"."post_status" NOT NULL DEFAULT 'draft',
+        "excerpt" character varying(500),
+        "content" text NOT NULL,
+        "content_format" character varying(20) NOT NULL DEFAULT 'markdown',
+        "author_id" uuid,
+        "featured_image" jsonb,
+        "is_featured" boolean NOT NULL DEFAULT false,
+        "views" integer NOT NULL DEFAULT 0,
+        "categories" text[] NOT NULL DEFAULT '{}',
+        "tags" text[] NOT NULL DEFAULT '{}',
+        "created_at" TIMESTAMPTZ NOT NULL DEFAULT now(),
+        "updated_at" TIMESTAMPTZ NOT NULL DEFAULT now(),
+        CONSTRAINT "PK_blog_posts_id" PRIMARY KEY ("id"),
+        CONSTRAINT "UQ_blog_posts_slug" UNIQUE ("slug"),
+        CONSTRAINT "CHK_blog_posts_content_format" CHECK ("content_format" IN ('markdown', 'html'))
+      )
+    `);
+
     await queryRunner.query(
       `CREATE UNIQUE INDEX "IDX_oauth_provider_providerId" ON "oauth_accounts" ("provider", "providerId")`,
+    );
+    await queryRunner.query(
+      `CREATE INDEX "idx_blog_posts_status_created_at" ON "blog_posts" ("status", "created_at" DESC)`,
+    );
+    await queryRunner.query(
+      `CREATE INDEX "idx_blog_posts_featured_created_at" ON "blog_posts" ("is_featured", "created_at" DESC)`,
+    );
+    await queryRunner.query(
+      `CREATE INDEX "idx_blog_posts_views" ON "blog_posts" ("views" DESC)`,
     );
 
     await queryRunner.query(`
@@ -124,12 +159,17 @@ export class Init1700000000000 implements MigrationInterface {
     );
 
     await queryRunner.query(`DROP INDEX "IDX_oauth_provider_providerId"`);
+    await queryRunner.query(`DROP INDEX "idx_blog_posts_views"`);
+    await queryRunner.query(`DROP INDEX "idx_blog_posts_featured_created_at"`);
+    await queryRunner.query(`DROP INDEX "idx_blog_posts_status_created_at"`);
+    await queryRunner.query(`DROP TABLE "blog_posts"`);
     await queryRunner.query(`DROP TABLE "oauth_accounts"`);
     await queryRunner.query(`DROP TABLE "password_reset_tokens"`);
     await queryRunner.query(`DROP TABLE "magic_link_tokens"`);
     await queryRunner.query(`DROP TABLE "refresh_tokens"`);
     await queryRunner.query(`DROP INDEX "IDX_users_email"`);
     await queryRunner.query(`DROP TABLE "users"`);
+    await queryRunner.query(`DROP TYPE "public"."post_status"`);
     await queryRunner.query(`DROP TYPE "public"."users_role_enum"`);
   }
 }

@@ -1,7 +1,24 @@
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import ViewTracker from "./ViewTracker";
 
-async function getPost(slug: string): Promise<any> {
+type BlogPost = {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt?: string | null;
+  content: string;
+  contentFormat: 'markdown' | 'html';
+  featuredImage?: {
+    id: string;
+    url: string;
+    alt?: string | null;
+  } | null;
+  categories?: string[];
+  tags?: string[];
+};
+
+async function getPost(slug: string): Promise<BlogPost | null> {
   console.log("[v0] Fetching blog post with slug:", slug);
   const apiUrl =
     process.env.INTERNAL_API_URL ?? process.env.NEXT_PUBLIC_API_URL;
@@ -19,6 +36,26 @@ async function getPost(slug: string): Promise<any> {
   } catch (error: any) {
     return null;
   }
+}
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const resolvedParams = await params;
+  const post = await getPost(resolvedParams.slug);
+  const title = post?.title ?? "Blog post";
+  const description = post?.excerpt ?? "Blog post detail";
+  const image = post?.featuredImage?.url;
+
+  return {
+    title,
+    description,
+    openGraph: image
+      ? {
+          title,
+          description,
+          images: [image],
+        }
+      : undefined,
+  };
 }
 
 export default async function BlogDetailPage({ params }: { params: any }) {
@@ -43,6 +80,7 @@ export default async function BlogDetailPage({ params }: { params: any }) {
   return (
     <main className="min-h-screen px-6 py-16">
       <article className="mx-auto max-w-3xl rounded-3xl bg-white p-10 shadow-xl">
+        <ViewTracker slug={resolvedParams.slug} />
         <p className="text-sm uppercase tracking-[0.3em] text-gray-500">Blog</p>
         <h1 className="mt-4 text-4xl font-semibold text-gray-900">
           {post.title}
@@ -50,7 +88,7 @@ export default async function BlogDetailPage({ params }: { params: any }) {
         {post.featuredImage?.url ? (
           <div className="mt-6 overflow-hidden rounded-2xl border border-gray-100 bg-gray-50">
             <img
-              src={post.featuredImage.url}
+              src={post.featuredImage.url || "/placeholder.svg"}
               alt={post.featuredImage.alt ?? post.title}
               className="h-64 w-full object-cover"
               loading="lazy"

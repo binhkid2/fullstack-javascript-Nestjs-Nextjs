@@ -99,8 +99,8 @@ Fields:
 
 **Frontend pages**
 - `/` (landing)
-  - top welcome card
-  - below: grid of published blogs (title + excerpt + featured image)
+  - welcome card
+  - grid of published blogs (title + excerpt + featured image)
   - if user is logged in: hide “Sign in” button
 - `/blog/[slug]`
   - renders blog content

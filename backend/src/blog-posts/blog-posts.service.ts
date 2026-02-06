@@ -19,14 +19,59 @@ export class BlogPostsService {
     });
   }
 
-  findPublished(): Promise<BlogPost[]> {
-    return this.blogPostsRepository
+  async findPublished(query: {
+    page: number;
+    pageSize: number;
+    q?: string;
+    tags?: string[];
+    categories?: string[];
+    sort: 'newest' | 'oldest' | 'most_viewed' | 'featured';
+  }): Promise<{ items: BlogPost[]; total: number; page: number; pageSize: number }> {
+    const qb = this.blogPostsRepository
       .createQueryBuilder('post')
       .where('post.status = :status', { status: PostStatus.PUBLISHED })
       .andWhere('post.slug IS NOT NULL')
-      .andWhere("post.slug <> ''")
-      .orderBy('post.created_at', 'DESC')
-      .getMany();
+      .andWhere("post.slug <> ''");
+
+    if (query.q) {
+      qb.andWhere(
+        '(post.title ILIKE :q OR post.excerpt ILIKE :q)',
+        { q: `%${query.q}%` },
+      );
+    }
+
+    if (query.tags && query.tags.length > 0) {
+      qb.andWhere('post.tags && :tags', { tags: query.tags });
+    }
+
+    if (query.categories && query.categories.length > 0) {
+      qb.andWhere('post.categories && :categories', {
+        categories: query.categories,
+      });
+    }
+
+    switch (query.sort) {
+      case 'oldest':
+        qb.orderBy('post.created_at', 'ASC');
+        break;
+      case 'most_viewed':
+        qb.orderBy('post.views', 'DESC').addOrderBy('post.created_at', 'DESC');
+        break;
+      case 'featured':
+        qb.orderBy('post.is_featured', 'DESC').addOrderBy('post.created_at', 'DESC');
+        break;
+      case 'newest':
+      default:
+        qb.orderBy('post.created_at', 'DESC');
+        break;
+    }
+
+    const [items, total] = await qb
+      .skip((query.page - 1) * query.pageSize)
+      .take(query.pageSize)
+      .getManyAndCount();
+
+    return { items, total, page: query.page, pageSize: query.pageSize };
   }
 
   async findPublishedBySlug(slug: string): Promise<BlogPost> {
@@ -43,6 +88,39 @@ export class BlogPostsService {
     return post;
   }
 
+  findFeatured(limit: number): Promise<BlogPost[]> {
+    return this.blogPostsRepository
+      .createQueryBuilder('post')
+      .where('post.status = :status', { status: PostStatus.PUBLISHED })
+      .andWhere('post.slug IS NOT NULL')
+      .andWhere("post.slug <> ''")
+      .andWhere('post.is_featured = true')
+      .orderBy('post.created_at', 'DESC')
+      .take(limit)
+      .getMany();
+  }
+
+  async incrementViewsBySlug(slug: string): Promise<number> {
+    await this.blogPostsRepository
+      .createQueryBuilder()
+      .update(BlogPost)
+      .set({ views: () => '"views" + 1' })
+      .where('LOWER(slug) = LOWER(:slug)', { slug })
+      .andWhere('status = :status', { status: PostStatus.PUBLISHED })
+      .execute();
+
+    const post = await this.blogPostsRepository
+      .createQueryBuilder('post')
+      .where('LOWER(post.slug) = LOWER(:slug)', { slug })
+      .getOne();
+
+    if (!post) {
+      throw new NotFoundException('Blog post not found');
+    }
+
+    return post.views;
+  }
+
   async create(dto: CreateBlogPostDto, authorId?: string): Promise<BlogPost> {
     const post = this.blogPostsRepository.create({
       title: dto.title.trim(),
@@ -53,8 +131,10 @@ export class BlogPostsService {
       status: PostStatus.DRAFT,
       authorId: authorId ?? null,
       featuredImage: dto.featuredImage ?? null,
+      isFeatured: dto.isFeatured ?? false,
       categories: dto.categories ?? [],
       tags: dto.tags ?? [],
+      views: 0,
     });
 
     return this.blogPostsRepository.save(post);
@@ -89,6 +169,10 @@ export class BlogPostsService {
 
     if (dto.status !== undefined) {
       post.status = dto.status;
+    }
+
+    if (dto.isFeatured !== undefined) {
+      post.isFeatured = dto.isFeatured;
     }
 
     if (dto.featuredImage !== undefined) {
