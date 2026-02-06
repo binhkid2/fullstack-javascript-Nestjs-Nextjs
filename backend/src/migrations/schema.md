@@ -1,12 +1,11 @@
 # Database Schema (Visual)
-
 ```mermaid
 erDiagram
   USERS {
     UUID id PK
     VARCHAR email
     VARCHAR name
-    ENUM users_role_enum role
+    ENUM role
     VARCHAR passwordHash
     BOOLEAN isActive
     TIMESTAMPTZ createdAt
@@ -53,7 +52,7 @@ erDiagram
     UUID id PK
     VARCHAR title
     VARCHAR slug
-    ENUM post_status status
+    ENUM status
     VARCHAR excerpt
     TEXT content
     VARCHAR content_format
@@ -75,7 +74,7 @@ erDiagram
 ```
 
 ## Notes
-- `users_role_enum`: ADMIN, MANAGER, MEMBER
-- `post_status`: draft, published, archived
+- `role` enum values: ADMIN, MANAGER, MEMBER
+- `status` enum values: draft, published, archived
 - `featured_image` is a JSON object `{ id, url, alt }`
 - `categories` and `tags` are text arrays
