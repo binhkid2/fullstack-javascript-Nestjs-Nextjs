@@ -30,11 +30,6 @@ export type FeaturedImage = {
 
 @Entity('blog_posts')
 @Index('idx_blog_posts_status_created_at', ['status', 'createdAt'])
-@Index('idx_blog_posts_published_at', ['publishedAt'])
-@Check(
-  'blog_posts_published_at_required',
-  `"status" <> 'published' OR "published_at" IS NOT NULL`,
-)
 @Check(
   'blog_posts_content_format_valid',
   `"content_format" IN ('markdown', 'html')`,
@@ -93,6 +88,4 @@ export class BlogPost {
   @UpdateDateColumn({ name: 'updated_at', type: 'timestamptz' })
   updatedAt!: Date;
 
-  @Column({ name: 'published_at', type: 'timestamptz', nullable: true })
-  publishedAt?: Date | null;
 }

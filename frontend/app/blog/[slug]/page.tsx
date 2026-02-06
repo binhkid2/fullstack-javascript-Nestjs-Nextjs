@@ -60,12 +60,6 @@ export default async function BlogDetailPage({ params }: { params: any }) {
         {post.excerpt ? (
           <p className="mt-4 text-lg text-gray-600">{post.excerpt}</p>
         ) : null}
-        {post.publishedAt ? (
-          <p className="mt-2 text-xs uppercase tracking-[0.3em] text-gray-400">
-            Published {new Date(post.publishedAt).toLocaleDateString()}
-          </p>
-        ) : null}
-
         {post.categories?.length || post.tags?.length ? (
           <div className="mt-6 flex flex-wrap gap-2 text-xs uppercase tracking-[0.2em] text-gray-500">
             {post.categories?.map((category: string) => (

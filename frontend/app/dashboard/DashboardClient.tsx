@@ -229,17 +229,10 @@ export default function DashboardClient({ userEmail, userRole }: Props) {
 
     setUpdatingStatusId(postId);
     try {
-      const payload: { status: PostStatus; publishedAt?: string } = {
-        status: nextStatus,
-      };
-      if (nextStatus === 'published') {
-        payload.publishedAt = new Date().toISOString();
-      }
-
       const response = await fetch(`/api/blog-posts/${postId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({ status: nextStatus }),
       });
 
       if (!response.ok) throw new Error('Failed');

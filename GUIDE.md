@@ -86,11 +86,6 @@ Fields:
 - `author_id` (UUID, user.id)
 - `created_at`
 - `updated_at`
-- `published_at`
-
-Rules:
-- If `status = published` then `published_at` must be set.
-- `published_at` can be set automatically when admin marks as published.
 
 ---
 
@@ -124,7 +119,6 @@ Rules:
   - MEMBER/MANAGER: plain text
   - ADMIN: select dropdown → update status
   - confirmation dialog on change
-  - automatically sets `published_at` on publish
 - Admin can edit/delete posts
 - Manager can create draft
 - Admin can create/edit posts
@@ -191,6 +185,6 @@ Frontend expects:
 
 - User logs in → backend issues JWT + refresh → NextAuth stores tokens → frontend uses accessToken for authenticated calls
 - Public blog list → directly from backend public endpoints
-- Admin updates blog → PATCH /blog-posts/:id with new status → published_at auto-set
+- Admin updates blog → PATCH /blog-posts/:id with new status
 
 --- 

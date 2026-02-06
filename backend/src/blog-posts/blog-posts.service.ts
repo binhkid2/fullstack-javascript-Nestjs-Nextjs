@@ -25,8 +25,7 @@ export class BlogPostsService {
       .where('post.status = :status', { status: PostStatus.PUBLISHED })
       .andWhere('post.slug IS NOT NULL')
       .andWhere("post.slug <> ''")
-      .orderBy('post.published_at', 'DESC')
-      .addOrderBy('post.created_at', 'DESC')
+      .orderBy('post.created_at', 'DESC')
       .getMany();
   }
 
@@ -92,10 +91,6 @@ export class BlogPostsService {
       post.status = dto.status;
     }
 
-    if (dto.publishedAt !== undefined) {
-      post.publishedAt = dto.publishedAt ? new Date(dto.publishedAt) : null;
-    }
-
     if (dto.featuredImage !== undefined) {
       post.featuredImage = dto.featuredImage ?? null;
     }
@@ -106,10 +101,6 @@ export class BlogPostsService {
 
     if (dto.tags !== undefined) {
       post.tags = dto.tags;
-    }
-
-    if (post.status === PostStatus.PUBLISHED && !post.publishedAt) {
-      post.publishedAt = new Date();
     }
 
     return this.blogPostsRepository.save(post);

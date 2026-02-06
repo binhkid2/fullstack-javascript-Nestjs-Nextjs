@@ -1,6 +1,5 @@
 import {
   IsArray,
-  IsDateString,
   IsEnum,
   IsObject,
   IsOptional,
@@ -52,10 +51,6 @@ export class UpdateBlogPostDto {
   @IsOptional()
   @IsEnum(PostStatus)
   status?: PostStatus;
-
-  @IsOptional()
-  @IsDateString()
-  publishedAt?: string | null;
 
   @IsOptional()
   @IsObject()
