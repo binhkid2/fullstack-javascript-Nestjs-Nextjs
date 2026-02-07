@@ -1,4 +1,5 @@
--- Seed 1 user and 11 published blog posts (markdown)
+ 
+-- Seed 1 user and 12 published blog posts (markdown, Japanese, ~500 words each)
 
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
@@ -21,327 +22,551 @@ WITH seed_user AS (
   RETURNING "id"
 ),
 posts AS (
+  -- Post 1
   SELECT
     uuid_generate_v4() AS id,
-    'Ship a Next.js Landing Page Without Slowing It Down' AS title,
-    'ship-nextjs-landing-page' AS slug,
+    '2025年大阪万博が日本経済に与える影響' AS title,
+    '2025-osaka-expo-economic-impact' AS slug,
     'published'::post_status AS status,
-    'A quick checklist for building a fast marketing page without losing design polish.' AS excerpt,
-    $$# Ship a Next.js Landing Page
+    '大阪・関西万博が地域経済と観光産業にもたらす変化を詳しく分析します。' AS excerpt,
+    $$# 2025年大阪万博が日本経済に与える影響
 
-Keep the hero light and the above-the-fold HTML small.
+2025年4月に開幕した大阪・関西万博は、「いのち輝く未来社会のデザイン」をテーマに掲げ、世界中から注目を集めています。会場となる夢洲（ゆめしま）には、150を超える国と地域が参加し、半年間で約2,800万人の来場者が見込まれています。
 
-## Checklist
-- Use server rendering for content
-- Avoid heavy client bundles
-- Compress hero images
+## 経済効果の全体像
 
-Short pages can still be fast and beautiful.$$ AS content,
+経済産業省の試算によると、万博の経済波及効果は約2兆円規模とされています。この数字には、建設投資、運営費、来場者の消費支出、さらには関連するインフラ整備の効果が含まれています。特に関西圏では、ホテルや飲食業、交通機関など幅広い業種が恩恵を受けると期待されています。
+
+大阪メトロ中央線の延伸や、夢洲周辺の道路整備など、万博に向けたインフラ投資は既に地域経済を活性化させています。建設業界では人手不足が深刻化する一方で、雇用の創出という面では大きなプラス効果が見られます。
+
+## 観光産業への波及
+
+万博は、インバウンド観光の回復を加速させる起爆剤としても期待されています。コロナ禍で大きな打撃を受けた日本の観光産業ですが、2024年には訪日外国人数が過去最高を更新しました。万博の開催により、さらに多くの外国人観光客が関西を訪れることが予想されます。
+
+京都、奈良、神戸といった周辺の観光都市にも波及効果が及び、関西全体の観光収入が大幅に増加する見通しです。各自治体は、万博と連携した観光キャンペーンを展開し、リピーターの獲得を目指しています。
+
+## 課題とリスク
+
+一方で、課題も少なくありません。建設費の高騰は当初予算の約1.9倍にまで膨れ上がり、国民の間では費用対効果に対する疑問の声も上がっています。また、パビリオンの建設遅延が報じられるなど、準備段階でのトラブルも散見されました。
+
+会場へのアクセスも懸念材料の一つです。夢洲は人工島であり、交通手段が限られているため、来場者の混雑対策が重要な課題となっています。シャトルバスや船舶による輸送計画が策定されていますが、実際の運用がスムーズに行われるかは未知数です。
+
+## 万博後の展望
+
+万博終了後の夢洲には、統合型リゾート（IR）の建設が予定されています。カジノを含むこの大型施設は、万博のレガシーとして関西経済の持続的な成長を支える存在になると期待されています。ただし、IR事業自体にも賛否両論があり、今後の議論が注目されます。
+
+万博が一過性のイベントで終わるのか、それとも日本の未来を変える転換点となるのか。その答えは、開催期間中の運営品質と、閉幕後のレガシー活用にかかっています。日本が世界に何を発信できるのか、その真価が問われる半年間が始まりました。$$ AS content,
     'markdown' AS content_format,
     (SELECT "id" FROM seed_user) AS author_id,
-    '{"id":"img-landing","url":"https://images.unsplash.com/photo-1527443224154-c4a3942d3acf","alt":"Landing page"}'::jsonb AS featured_image,
+    '{"id":"img-expo","url":"https://images.unsplash.com/photo-1524413840807-0c3cb6fa808d","alt":"大阪万博"}'::jsonb AS featured_image,
     true AS is_featured,
-    184 AS views,
-    ARRAY['frontend', 'performance'] AS categories,
-    ARRAY['nextjs', 'webperf', 'ui'] AS tags,
-    now() - interval '14 days' AS created_at,
-    now() - interval '3 days' AS updated_at
+    312 AS views,
+    ARRAY['経済', '大阪'] AS categories,
+    ARRAY['万博', '経済効果', '観光'] AS tags,
+    now() - interval '24 days' AS created_at,
+    now() - interval '2 days' AS updated_at
 
   UNION ALL
+  -- Post 2
   SELECT
     uuid_generate_v4(),
-    'CSS Grid Patterns for Content-Heavy Blogs',
-    'css-grid-patterns-for-blogs',
+    '日本の少子化対策：こども家庭庁の挑戦と現実',
+    'japan-declining-birthrate-policy',
     'published'::post_status,
-    'Three grid layouts that keep cards readable and breathable.',
-    $$# CSS Grid Patterns
+    '過去最低を更新し続ける出生数に対し、政府の新たな対策を検証します。',
+    $$# 日本の少子化対策：こども家庭庁の挑戦と現実
 
-Grid makes large content lists feel organized.
+2023年に発足したこども家庭庁は、日本の少子化問題に正面から取り組む司令塔として設立されました。しかし、2024年の出生数は約72万人と過去最少を更新し、状況は依然として深刻です。政府は「異次元の少子化対策」を掲げていますが、その効果は本当に現れるのでしょうか。
 
-## Patterns
-- Masonry-style cards
-- Two-column editorial
-- Split layout with sidebar
+## 現状の数字が語る危機
 
-Keep gaps consistent and cards readable.$$,
+日本の合計特殊出生率は1.20にまで低下し、人口置換水準の2.07を大きく下回っています。このペースが続けば、2050年には日本の総人口は1億人を割り込み、2100年には6,000万人台にまで減少すると推計されています。
+
+特に地方では、若者の流出と高齢化が同時に進行し、消滅可能性都市と呼ばれる自治体が増加しています。学校の統廃合、病院の閉鎖、公共交通の廃止など、生活インフラの維持すら困難になりつつある地域も少なくありません。
+
+## 政府の主な施策
+
+こども家庭庁が推進する対策の柱は、経済的支援の拡充です。児童手当の対象拡大と増額、出産費用の保険適用、育児休業給付の引き上げなど、家計の負担軽減を目指した施策が次々と打ち出されています。
+
+また、共働き世帯の増加に対応するため、保育所の整備や病児保育の拡充も進められています。「こども誰でも通園制度」の導入により、就労の有無に関わらず保育サービスを利用できる仕組みが試験的に始まっています。
+
+企業に対しては、男性の育児休業取得率の向上を求める施策が強化されています。2025年度からは、従業員1,000人以上の企業に男性育休取得率の公表が義務付けられました。
+
+## 根深い構造的問題
+
+しかし、多くの専門家は、経済的支援だけでは少子化の流れを変えることは難しいと指摘しています。日本社会に根付く長時間労働の文化、性別役割分担の固定観念、結婚に対する価値観の変化など、構造的な問題が複雑に絡み合っているためです。
+
+特に若い世代の間では、経済的な不安から結婚や出産を先送りにする傾向が強まっています。非正規雇用の割合が高く、将来の見通しが立たないことが、家庭を持つことへのハードルを上げています。
+
+## 海外の成功事例から学ぶ
+
+フランスやスウェーデンなど、出生率の回復に成功した国々に共通するのは、長期的かつ包括的な支援体制です。単なる金銭的支援にとどまらず、働き方改革、住宅政策、教育の無償化など、社会全体で子育てを支える仕組みが構築されています。
+
+日本がこれらの国々から学び、実効性のある対策を実行できるかどうか。少子化問題は、日本の未来を左右する最も重要な課題の一つです。時間的猶予は、もうほとんど残されていません。$$,
     'markdown',
     (SELECT "id" FROM seed_user),
-    '{"id":"img-grid","url":"https://images.unsplash.com/photo-1489515217757-5fd1be406fef","alt":"Grid layout"}'::jsonb,
+    '{"id":"img-birthrate","url":"https://images.unsplash.com/photo-1476703993599-0035a21b17a9","alt":"少子化対策"}'::jsonb,
     true,
-    139,
-    ARRAY['frontend', 'design'],
-    ARRAY['css', 'layout', 'grid'],
-    now() - interval '13 days',
-    now() - interval '4 days'
-
-  UNION ALL
-  SELECT
-    uuid_generate_v4(),
-    'API Pagination That Feels Good',
-    'api-pagination-that-feels-good',
-    'published'::post_status,
-    'A pragmatic recipe for stable pagination and friendly UX.',
-    $$# API Pagination
-
-Use stable sorting and return total counts.
-
-## Tips
-- Default to newest
-- Clamp page sizes
-- Provide next/prev hints
-
-Your UI will feel faster with predictable pages.$$,
-    'markdown',
-    (SELECT "id" FROM seed_user),
-    NULL,
-    false,
-    97,
-    ARRAY['backend', 'api'],
-    ARRAY['pagination', 'rest'],
-    now() - interval '12 days',
-    now() - interval '6 days'
-
-  UNION ALL
-  SELECT
-    uuid_generate_v4(),
-    'Designing a Simple Author Model',
-    'designing-a-simple-author-model',
-    'published'::post_status,
-    'Keep your author model minimal and your UI flexible.',
-    $$# Author Model
-
-Start with name and email.
-
-## Why it works
-- Clean UI labels
-- Easy filtering
-- Simple joins
-
-Add more fields only if you need them.$$,
-    'markdown',
-    (SELECT "id" FROM seed_user),
-    NULL,
-    false,
-    82,
-    ARRAY['backend', 'data'],
-    ARRAY['schema', 'users'],
-    now() - interval '11 days',
-    now() - interval '7 days'
-
-  UNION ALL
-  SELECT
-    uuid_generate_v4(),
-    'A Tiny Guide to Markdown Content',
-    'tiny-guide-to-markdown-content',
-    'published'::post_status,
-    'Keep Markdown short, structured, and easy to scan.',
-    $$# Markdown Content
-
-Short paragraphs win.
-
-## Structure
-- H2 for sections
-- Lists for steps
-- Bold for key terms
-
-Readers scan before they commit.$$,
-    'markdown',
-    (SELECT "id" FROM seed_user),
-    NULL,
-    false,
-    74,
-    ARRAY['content'],
-    ARRAY['markdown', 'writing'],
-    now() - interval '10 days',
-    now() - interval '8 days'
-
-  UNION ALL
-  SELECT
-    uuid_generate_v4(),
-    'Using Tags Without Tag Chaos',
-    'using-tags-without-tag-chaos',
-    'published'::post_status,
-    'Tags are great when you cap, group, and normalize them.',
-    $$# Tag Strategy
-
-Tags should help navigation, not confuse it.
-
-## Rules
-- Limit to 3-5 tags
-- Use lowercase
-- Avoid duplicates
-
-Good tags make search feel smart.$$,
-    'markdown',
-    (SELECT "id" FROM seed_user),
-    NULL,
-    false,
-    65,
-    ARRAY['content', 'product'],
-    ARRAY['tags', 'taxonomy'],
-    now() - interval '9 days',
-    now() - interval '6 days'
-
-  UNION ALL
-  SELECT
-    uuid_generate_v4(),
-    'Fast Filters on Large Lists',
-    'fast-filters-on-large-lists',
-    'published'::post_status,
-    'Keep filter UI snappy with server-side queries.',
-    $$# Fast Filters
-
-Server-side filters keep payloads small.
-
-## Notes
-- Index tags and categories
-- Use ILIKE for search
-- Cache popular queries
-
-It stays fast even with lots of posts.$$,
-    'markdown',
-    (SELECT "id" FROM seed_user),
-    NULL,
-    false,
-    120,
-    ARRAY['backend', 'performance'],
-    ARRAY['filters', 'sql'],
-    now() - interval '8 days',
-    now() - interval '5 days'
-
-  UNION ALL
-  SELECT
-    uuid_generate_v4(),
-    'Crafting a Featured Section',
-    'crafting-a-featured-section',
-    'published'::post_status,
-    'Use one hero and a few supporting picks to avoid clutter.',
-    $$# Featured Section
-
-A single hero story anchors the page.
-
-## Layout
-- One large card
-- 2-3 supporting cards
-- Clear CTA
-
-Featured should feel curated, not random.$$,
-    'markdown',
-    (SELECT "id" FROM seed_user),
-    '{"id":"img-feature","url":"https://images.unsplash.com/photo-1498050108023-c5249f4df085","alt":"Featured post"}'::jsonb,
-    true,
-    156,
-    ARRAY['frontend', 'ux'],
-    ARRAY['layout', 'featured'],
-    now() - interval '7 days',
+    287,
+    ARRAY['社会', '政治'] AS categories,
+    ARRAY['少子化', 'こども家庭庁', '人口問題'] AS tags,
+    now() - interval '22 days',
     now() - interval '3 days'
 
   UNION ALL
+  -- Post 3
   SELECT
     uuid_generate_v4(),
-    'SEO Basics for Engineering Blogs',
-    'seo-basics-for-engineering-blogs',
+    '能登半島地震から1年：復興の現状と残された課題',
+    'noto-earthquake-recovery-one-year',
     'published'::post_status,
-    'Titles, descriptions, and clean slugs do most of the work.',
-    $$# SEO Basics
+    '能登半島地震から1年が経過。被災地の復興状況と今後の課題をまとめます。',
+    $$# 能登半島地震から1年：復興の現状と残された課題
 
-Start with the basics before advanced tooling.
+2024年1月1日に発生した能登半島地震は、最大震度7を記録し、石川県を中心に甚大な被害をもたらしました。死者245名、全壊家屋8,000棟以上という深刻な被害から1年が経過した今、復興はどこまで進んでいるのでしょうか。
 
-## Must-haves
-- Clean slugs
-- Strong titles
-- Meta descriptions
+## 仮設住宅とインフラの復旧
 
-That alone boosts discoverability.$$,
+地震発生後、約1万5,000人が避難生活を余儀なくされました。仮設住宅の建設は進み、2024年末までにほぼ全ての希望者に仮設住宅が提供されましたが、狭い居住空間や地域コミュニティの分断といった問題が指摘されています。
+
+道路や上下水道などのインフラ復旧は、主要幹線については概ね完了しています。しかし、山間部の生活道路や農業用水路など、住民の日常生活に直結するインフラの復旧は遅れが目立ちます。特に輪島市や珠洲市の一部地域では、いまだに仮復旧の状態が続いています。
+
+## 伝統産業への打撃
+
+能登地方は、輪島塗や珠洲焼、能登の揚げ浜式製塩など、伝統工芸や地場産業の宝庫です。地震により、多くの工房や窯元が壊滅的な被害を受けました。職人の高齢化が進む中、事業の再建を断念するケースも出ています。
+
+輪島朝市通りの大火災は、地域のシンボルを奪いました。再建に向けた計画は策定されていますが、土地の権利関係の整理や防火対策の強化など、解決すべき問題は山積しています。地元の商店主たちは、仮設店舗での営業を続けながら、本格的な復興を待ち望んでいます。
+
+## 人口流出という静かな危機
+
+復興が遅れる中、被災地からの人口流出が加速しています。特に若い世代や子育て世帯が、生活環境の整った金沢市や県外へ転出するケースが増えています。もともと過疎化が進んでいた地域にとって、この人口流出は復興の大きな障壁となっています。
+
+自治体は移住支援策や住宅再建支援の拡充に取り組んでいますが、雇用の場が限られる中、若者を引き留めることは容易ではありません。地域の将来を担う人材の確保が、復興の成否を左右する重要な要素となっています。
+
+## 教訓と備え
+
+能登半島地震は、日本の災害対策にいくつかの重要な教訓を残しました。半島という地形的な制約により、救援物資の輸送や救助活動が困難を極めたこと、高齢者の多い地域での避難支援体制の脆弱さ、そして自治体の防災計画の見直しの必要性です。
+
+南海トラフ地震や首都直下型地震のリスクが指摘される中、能登の経験を全国の防災対策に活かすことが求められています。被災地の復興を支え続けると同時に、次の災害に備える。その両立が、今の日本に課された使命です。$$,
     'markdown',
     (SELECT "id" FROM seed_user),
-    NULL,
-    false,
-    88,
-    ARRAY['marketing', 'content'],
-    ARRAY['seo', 'metadata'],
-    now() - interval '6 days',
-    now() - interval '2 days'
-
-  UNION ALL
-  SELECT
-    uuid_generate_v4(),
-    'Keeping Drafts Safe',
-    'keeping-drafts-safe',
-    'published'::post_status,
-    'Why draft status should never leak into public listings.',
-    $$# Draft Safety
-
-Always filter by status = published.
-
-## Guardrails
-- Enforce in queries
-- Require slug
-- Add tests
-
-This prevents accidental leaks.$$,
-    'markdown',
-    (SELECT "id" FROM seed_user),
-    NULL,
-    false,
-    52,
-    ARRAY['backend', 'security'],
-    ARRAY['rbac', 'status'],
-    now() - interval '5 days',
-    now() - interval '2 days'
-
-  UNION ALL
-  SELECT
-    uuid_generate_v4(),
-    'Measuring Views the Simple Way',
-    'measuring-views-the-simple-way',
-    'published'::post_status,
-    'Incrementing view counts on read without overengineering.',
-    $$# View Counts
-
-A single increment endpoint is enough.
-
-## Keep it clean
-- Update by slug
-- Clamp to published
-- No cookies needed
-
-Good enough for most blogs.$$,
-    'markdown',
-    (SELECT "id" FROM seed_user),
-    '{"id":"img-views","url":"https://images.unsplash.com/photo-1553877522-43269d4ea984","alt":"Analytics"}'::jsonb,
-    false,
-    111,
-    ARRAY['analytics', 'backend'],
-    ARRAY['views', 'metrics'],
-    now() - interval '4 days',
+    '{"id":"img-noto","url":"https://images.unsplash.com/photo-1504439468489-c8920d796a29","alt":"能登半島復興"}'::jsonb,
+    true,
+    245,
+    ARRAY['社会', '災害'] AS categories,
+    ARRAY['能登半島地震', '復興', '防災'] AS tags,
+    now() - interval '20 days',
     now() - interval '1 day'
 
   UNION ALL
+  -- Post 4
   SELECT
     uuid_generate_v4(),
-    'A Minimal Newsletter Flow',
-    'a-minimal-newsletter-flow',
+    '日本の半導体復活戦略：ラピダスとTSMC誘致の行方',
+    'japan-semiconductor-revival-rapidus-tsmc',
     'published'::post_status,
-    'Capture emails with a single field and a calm promise.',
-    $$# Newsletter Flow
+    '国策として進む半導体産業の復活。ラピダスとTSMC熊本工場の最新動向を解説します。',
+    $$# 日本の半導体復活戦略：ラピダスとTSMC誘致の行方
 
-Keep it short and trust-building.
+かつて世界の半導体市場で50%以上のシェアを誇った日本。しかし、2020年代にはそのシェアは10%以下にまで低下しました。この危機感から、日本政府は半導体産業の復活を国家戦略として位置づけ、巨額の投資を進めています。
 
-## Copy ideas
-- Weekly digest only
-- No spam
-- Unsubscribe anytime
+## ラピダス：2ナノの挑戦
 
-A simple promise gets more signups.$$,
+北海道千歳市に建設中のラピダス（Rapidus）は、日本が世界最先端の2ナノメートルプロセスの半導体製造を目指す野心的なプロジェクトです。トヨタ、ソニー、NTTなど8社が出資し、政府も9,200億円以上の補助金を投じています。
+
+IBMから技術供与を受け、2027年の量産開始を目標としていますが、課題は山積しています。最先端半導体の製造経験がない企業が、わずか数年で世界トップクラスの技術を確立できるのかという疑問は根強いものがあります。人材の確保も深刻な問題で、世界中から技術者を集める必要があります。
+
+## TSMC熊本工場：地域を変える巨大投資
+
+一方、台湾のTSMCが熊本県菊陽町に建設した第1工場は、2024年末に稼働を開始しました。さらに第2工場の建設も決定し、合計投資額は2兆円を超える規模です。この投資は、熊本県のみならず九州全体の経済を大きく変えつつあります。
+
+菊陽町周辺では、地価が急騰し、新たなマンションや商業施設の建設ラッシュが続いています。関連するサプライヤー企業の進出も相次ぎ、雇用の創出効果は計り知れません。地元では「シリコンアイランド九州」の復活という言葉が現実味を帯びてきています。
+
+## 日本の強みと弱み
+
+半導体産業において、日本には依然として強みがあります。製造装置と素材の分野では、東京エレクトロン、信越化学、JSRなどの日本企業が世界市場で高いシェアを維持しています。この川上の強さを活かしながら、製造能力を取り戻すことが戦略の核心です。
+
+しかし、弱みも明確です。ファウンドリ（受託製造）の経験不足、ソフトウェアやEDA（電子設計自動化）ツールにおける海外依存、そして何より技術者の不足が深刻です。半導体人材の育成には時間がかかり、短期間での解決は困難です。
+
+## 地政学的な背景
+
+この半導体復活戦略の背景には、米中対立の激化があります。サプライチェーンの安全保障が重視される中、日本が先端半導体の製造能力を持つことは、経済安全保障上の重要な意味を持ちます。
+
+巨額の国費投入に対する批判もありますが、半導体はAI、自動運転、医療機器など、あらゆる先端技術の基盤です。この投資が日本の産業競争力の回復につながるのか、今後数年の成果が問われることになります。$$,
+    'markdown',
+    (SELECT "id" FROM seed_user),
+    '{"id":"img-semiconductor","url":"https://images.unsplash.com/photo-1518770660439-4636190af475","alt":"半導体"}'::jsonb,
+    true,
+    334,
+    ARRAY['テクノロジー', '経済'] AS categories,
+    ARRAY['半導体', 'ラピダス', 'TSMC'] AS tags,
+    now() - interval '18 days',
+    now() - interval '2 days'
+
+  UNION ALL
+  -- Post 5
+  SELECT
+    uuid_generate_v4(),
+    '日本のAI規制はどこへ向かうのか',
+    'japan-ai-regulation-direction',
+    'published'::post_status,
+    'EUや米国と異なるアプローチを取る日本のAI規制の現状と展望を解説します。',
+    $$# 日本のAI規制はどこへ向かうのか
+
+生成AIの急速な普及に伴い、世界各国でAI規制の議論が加速しています。EUがAI法（AI Act）を施行し、厳格なルールを導入する一方、日本は独自のアプローチを模索しています。日本のAI規制は、どのような方向に向かっているのでしょうか。
+
+## 日本の基本姿勢：ソフトロー中心
+
+日本政府は、法律による厳格な規制（ハードロー）ではなく、ガイドラインや業界自主規制（ソフトロー）を中心としたアプローチを採用しています。2024年に公表された「AI事業者ガイドライン」は、AI開発者、提供者、利用者それぞれの責務を示していますが、法的拘束力はありません。
+
+この姿勢の背景には、過度な規制がイノベーションを阻害するという懸念があります。日本のAI産業は、米国や中国に比べて規模が小さく、競争力を高めるためには柔軟な環境が必要だという判断です。
+
+## 著作権問題の最前線
+
+日本のAI規制で最も注目を集めているのが、著作権の問題です。日本の著作権法第30条の4は、AIの学習における著作物の利用を比較的広く認めており、これは世界的に見ても特異な規定です。
+
+この規定により、日本はAI開発においてデータ活用の面で有利な環境を持っていますが、クリエイターからは強い反発が出ています。イラストレーターや作家、写真家などのクリエイターは、自身の作品が無断でAIの学習に使用されることに対して懸念を表明しています。文化庁は、この問題に対するガイドラインの改定を進めていますが、クリエイターの権利保護とAI発展のバランスをどう取るかは難しい問題です。
+
+## ディープフェイクと選挙への影響
+
+2025年の参議院選挙を控え、AIを用いたディープフェイクによる偽情報の拡散が大きな懸念となっています。政治家の偽動画や音声が選挙に影響を与えるリスクは現実的であり、総務省は対策の強化を急いでいます。
+
+プラットフォーム事業者に対する透明性の確保や、AI生成コンテンツの表示義務など、具体的な措置が検討されています。しかし、技術の進歩のスピードに規制が追いつけるのかという根本的な問題は残ります。
+
+## 国際協調の重要性
+
+AI規制は、一国だけで完結する問題ではありません。G7広島AIプロセスで採択された「広島AIプロセス包括的政策枠組み」は、国際的なAIガバナンスの基盤となることが期待されています。日本がこの枠組みを主導したことは、国際的な存在感を示す上で重要な成果でした。
+
+今後、日本がソフトローアプローチを維持するのか、それとも特定の分野でハードローに踏み切るのか。AIの社会への浸透が加速する中、迅速かつ適切な判断が求められています。$$,
     'markdown',
     (SELECT "id" FROM seed_user),
     NULL,
     false,
-    58,
-    ARRAY['product', 'marketing'],
-    ARRAY['newsletter', 'growth'],
-    now() - interval '3 days',
+    198,
+    ARRAY['テクノロジー', '政治'] AS categories,
+    ARRAY['AI', '規制', '著作権'] AS tags,
+    now() - interval '16 days',
+    now() - interval '3 days'
+
+  UNION ALL
+  -- Post 6
+  SELECT
+    uuid_generate_v4(),
+    '円安時代の日本：家計と企業への影響',
+    'weak-yen-impact-households-businesses',
+    'published'::post_status,
+    '長引く円安が日本の家計と企業に与える複雑な影響を多角的に分析します。',
+    $$# 円安時代の日本：家計と企業への影響
+
+2022年以降、円安傾向が続いています。一時は1ドル160円台を記録するなど、歴史的な円安水準が日本経済に大きな影響を与えています。円安は日本にとって恩恵なのか、それとも脅威なのか。家計と企業の両面から考えます。
+
+## 家計を直撃する物価上昇
+
+円安の最も直接的な影響は、輸入品価格の上昇です。日本はエネルギーの約90%、食料の約60%を輸入に依存しています。円安により、ガソリン、電気、ガスといったエネルギー価格が上昇し、食品価格も幅広く値上がりしています。
+
+2024年の食品値上げは1万品目を超え、家計への負担は増す一方です。特に、所得が増えにくい年金生活者や非正規雇用者にとって、物価上昇の影響は深刻です。実質賃金は長期にわたってマイナスが続き、消費者の節約志向が強まっています。
+
+スーパーマーケットでは、プライベートブランド商品の売上が伸び、外食から内食への切り替えが進んでいます。消費者の行動変化は、小売業や外食産業のビジネスモデルにも影響を及ぼしています。
+
+## 輸出企業には追い風
+
+一方、製造業を中心とした輸出企業にとって、円安は業績を押し上げる要因となっています。トヨタ、ソニー、任天堂など、海外売上比率の高い企業は、為替差益により過去最高益を更新するケースが相次いでいます。
+
+自動車産業では、海外での販売価格を据え置いても円建ての収益が増加するため、価格競争力が向上します。また、海外子会社の利益を円に換算した際の金額も膨らみます。この結果、日本の株式市場は活況を呈し、日経平均株価は史上最高値を更新しました。
+
+## インバウンド観光の爆発的成長
+
+円安は、訪日外国人観光客にとって日本を「お得な旅行先」にしています。2024年の訪日外国人数は3,600万人を超え、過去最高を記録しました。観光客の消費額も大幅に増加し、地方経済の活性化に貢献しています。
+
+東京、大阪、京都といった定番の観光地だけでなく、北海道のニセコ、瀬戸内海の島々、九州の温泉地など、地方への観光客の分散も進んでいます。宿泊施設の不足が課題となる一方、古民家再生やグランピング施設など、新たな宿泊ビジネスも生まれています。
+
+## 日銀の金融政策と今後の見通し
+
+円安の根本的な原因は、日米の金利差にあります。日本銀行は2024年にマイナス金利政策を解除しましたが、利上げのペースは慎重です。一方、米国の金利は依然として高水準にあり、金利差が円安圧力を維持しています。
+
+円安がいつまで続くのか、その答えは日米の金融政策の方向性にかかっています。家計と企業、それぞれが円安時代に適応する戦略を求められる時代が続きそうです。$$,
+    'markdown',
+    (SELECT "id" FROM seed_user),
+    '{"id":"img-yen","url":"https://images.unsplash.com/photo-1526304640581-d334cdbbf45e","alt":"円安"}'::jsonb,
+    false,
+    267,
+    ARRAY['経済', '生活'] AS categories,
+    ARRAY['円安', '物価', '為替'] AS tags,
+    now() - interval '15 days',
+    now() - interval '4 days'
+
+  UNION ALL
+  -- Post 7
+  SELECT
+    uuid_generate_v4(),
+    '日本のライドシェア解禁：タクシー業界の変革',
+    'japan-rideshare-deregulation',
+    'published'::post_status,
+    '部分的に解禁されたライドシェアの現状と、タクシー業界への影響を検証します。',
+    $$# 日本のライドシェア解禁：タクシー業界の変革
+
+長年にわたり議論されてきた日本のライドシェアが、2024年4月に部分的に解禁されました。ただし、その形態は欧米のUberやLyftとは大きく異なります。タクシー会社の管理下でのみ運行が認められる「日本版ライドシェア」は、何を変え、何を変えなかったのでしょうか。
+
+## 解禁の背景：深刻なタクシー不足
+
+ライドシェア解禁の最大の背景は、タクシードライバーの深刻な不足です。コロナ禍で多くのドライバーが離職し、業界の従事者数はピーク時から約40%減少しました。特に観光地や地方都市では、タクシーが全く捕まらないという状況が日常化しています。
+
+京都では、観光客がタクシーを求めて長蛇の列を作り、待ち時間が1時間を超えることも珍しくありません。地方の過疎地域では、公共交通機関の廃止が相次ぐ中、タクシーが唯一の移動手段となっているにもかかわらず、ドライバーの高齢化と不足が深刻です。
+
+## 日本版ライドシェアの仕組み
+
+日本版ライドシェアでは、一般のドライバーが自家用車で旅客を運ぶことが認められますが、運行管理はタクシー会社が行います。ドライバーはタクシー会社と雇用契約を結び、安全研修を受ける必要があります。また、運行できる地域と時間帯は限定されており、タクシーが不足している時間帯と地域に限られます。
+
+料金はタクシーのメーター運賃に準じており、ダイナミックプライシング（需要に応じた価格変動）は導入されていません。利用者にとっては、アプリで配車を依頼できる利便性がある一方、料金面でのメリットは限定的です。
+
+## 業界と利用者の反応
+
+タクシー業界からは、既存の規制の枠組みを維持した形での解禁を評価する声がある一方、ドライバーの確保効果に疑問を呈する意見もあります。タクシー会社との雇用契約が必要という条件は、副業として気軽に参入したい人にとってはハードルとなっています。
+
+利用者からは、「もっと自由な形でのライドシェアを認めるべきだ」という声が根強くあります。特にテクノロジー業界やスタートアップの関係者は、イノベーションを阻害する規制だと批判しています。
+
+## 地方交通の未来
+
+ライドシェアの議論は、日本の地方交通の根本的な問題を浮き彫りにしています。人口減少により、バスや鉄道の路線が次々と廃止される中、住民の移動手段をどう確保するかは喫緊の課題です。
+
+自動運転技術との組み合わせや、デマンド型交通の導入など、新しい技術やサービスモデルの活用が不可欠です。ライドシェアの部分解禁は、日本の交通政策が変わり始めた第一歩と言えるかもしれません。今後の規制緩和の行方が注目されます。$$,
+    'markdown',
+    (SELECT "id" FROM seed_user),
+    NULL,
+    false,
+    176,
+    ARRAY['社会', '交通'] AS categories,
+    ARRAY['ライドシェア', 'タクシー', '規制改革'] AS tags,
+    now() - interval '14 days',
+    now() - interval '5 days'
+
+  UNION ALL
+  -- Post 8
+  SELECT
+    uuid_generate_v4(),
+    '日本の宇宙開発最前線：H3ロケットと月面探査',
+    'japan-space-h3-rocket-lunar-exploration',
+    'published'::post_status,
+    'H3ロケットの成功とSLIMの月面着陸。日本の宇宙開発の現在地を紹介します。',
+    $$# 日本の宇宙開発最前線：H3ロケットと月面探査
+
+日本の宇宙開発が新たなステージに入っています。次世代ロケット「H3」の打ち上げ成功、小型月着陸実証機「SLIM」の月面着陸成功など、明るいニュースが相次いでいます。日本の宇宙開発はどこまで来たのか、そしてどこへ向かうのかを解説します。
+
+## H3ロケット：コスト半減への挑戦
+
+H3ロケットは、JAXAと三菱重工業が開発した次世代基幹ロケットです。2023年3月の初号機打ち上げは失敗に終わりましたが、2024年2月の2号機で見事に成功を収めました。その後の打ち上げも連続して成功し、信頼性を着実に積み上げています。
+
+H3の最大の特徴は、従来のH-IIAロケットに比べて打ち上げ費用を約半分の50億円に抑えることを目指している点です。国際的な衛星打ち上げ市場では、スペースXのファルコン9が圧倒的なシェアを持っていますが、H3はコスト競争力を高めることで市場参入を狙っています。
+
+## SLIMの快挙：ピンポイント月面着陸
+
+2024年1月、小型月着陸実証機SLIMが月面への軟着陸に成功しました。日本は、旧ソ連、米国、中国、インドに続く世界5番目の月面着陸達成国となりました。特筆すべきは、着陸精度が100メートル以内という「ピンポイント着陸」技術の実証に成功したことです。
+
+従来の月面着陸は、数キロメートル単位の誤差が当たり前でした。SLIMの技術は、将来の月面探査において、科学的に重要な地点に正確に着陸することを可能にします。着陸時に逆さまの姿勢になるというハプニングもありましたが、搭載した小型ロボットが撮影した画像は世界に配信され、大きな話題となりました。
+
+## 民間宇宙企業の台頭
+
+日本の宇宙産業では、民間企業の存在感が増しています。ispaceは月面着陸を目指すプログラムを進めており、スペースワンは小型ロケット「カイロス」の開発を続けています。また、アストロスケールは宇宙デブリ（ゴミ）の除去技術で世界をリードしています。
+
+宇宙スタートアップへの投資も増加しており、日本の宇宙産業は官主導から官民連携へと移行しつつあります。政府は2030年代前半までに宇宙産業の市場規模を倍増させる目標を掲げています。
+
+## アルテミス計画と日本の役割
+
+NASAが主導する国際月探査計画「アルテミス」において、日本は重要なパートナーとして参加しています。日本人宇宙飛行士が月面に立つ日も、もはや夢物語ではありません。月周回宇宙ステーション「ゲートウェイ」への機器提供や、月面での有人ローバーの開発など、日本の技術が月探査の最前線で活躍することが期待されています。
+
+宇宙開発は、国の技術力と夢の象徴です。H3の安定運用とSLIMの成功を足がかりに、日本の宇宙開発は新たな黄金時代を迎えようとしています。$$,
+    'markdown',
+    (SELECT "id" FROM seed_user),
+    '{"id":"img-space","url":"https://images.unsplash.com/photo-1446776811953-b23d57bd21aa","alt":"宇宙開発"}'::jsonb,
+    true,
+    298,
+    ARRAY['テクノロジー', '科学'] AS categories,
+    ARRAY['宇宙', 'H3ロケット', 'JAXA'] AS tags,
+    now() - interval '12 days',
+    now() - interval '2 days'
+
+  UNION ALL
+  -- Post 9
+  SELECT
+    uuid_generate_v4(),
+    '日本の物流2024年問題：届かなくなる日本',
+    'japan-logistics-2024-problem',
+    'published'::post_status,
+    'トラックドライバーの労働時間規制が物流に与える影響と対策を解説します。',
+    $$# 日本の物流2024年問題：届かなくなる日本
+
+2024年4月から、トラックドライバーの時間外労働に年間960時間の上限が適用されました。いわゆる「2024年問題」です。この規制により、日本の物流は深刻な輸送力不足に直面しています。何も手を打たなければ、2030年には約35%の荷物が運べなくなるという試算もあります。
+
+## 問題の本質
+
+物流業界は、長年にわたり長時間労働と低賃金という構造的な問題を抱えてきました。ドライバーの平均年齢は50歳を超え、若い世代の参入は少ない状況です。EC（電子商取引）の拡大により宅配の取扱個数は増え続ける一方、それを支えるドライバーは減り続けています。
+
+労働時間の上限規制は、ドライバーの健康と安全を守るために必要な措置です。しかし、これまで長時間労働で何とか回していた物流網が、規制によって維持できなくなるという皮肉な事態が生じています。
+
+## 具体的な影響
+
+最も影響が大きいのは、長距離輸送です。例えば、東京から大阪への日帰り運行が難しくなり、中継拠点を設けるか、鉄道や船舶への切り替えが必要になります。農産物や水産物の産地直送にも影響が出ており、地方の生産者は新たな物流ルートの構築を迫られています。
+
+消費者にとっても、翌日配送や時間指定配送といったサービスの維持が難しくなる可能性があります。再配達の問題も深刻で、宅配便の約15%が再配達となっており、ドライバーの負担を増大させています。宅配ボックスの普及や置き配の推進が急がれますが、マンションの管理規約やセキュリティの問題もあり、一筋縄ではいきません。
+
+## 業界の対策
+
+物流業界では、さまざまな対策が講じられています。モーダルシフト（トラックから鉄道・船舶への転換）、共同配送（複数の企業が配送を共有）、中継輸送（長距離を複数のドライバーでリレー）などが進められています。
+
+テクノロジーの活用も加速しています。自動運転トラックの実証実験が高速道路で行われており、ドローンによる離島や山間部への配送も実用化に向けた動きが進んでいます。物流DX（デジタルトランスフォーメーション）により、配車の最適化や荷待ち時間の削減も図られています。
+
+## 消費者の意識改革
+
+物流2024年問題は、私たち消費者にも意識の変革を求めています。「送料無料」の裏側には、ドライバーの過酷な労働があること。翌日届くことが当たり前ではないこと。再配達を減らす工夫をすること。物流は社会のインフラであり、その持続可能性は私たち全員の問題です。
+
+届けてくれる人がいるから、届く。その当たり前を守るために、社会全体で考える時が来ています。$$,
+    'markdown',
+    (SELECT "id" FROM seed_user),
+    NULL,
+    false,
+    223,
+    ARRAY['社会', '経済'] AS categories,
+    ARRAY['物流', '2024年問題', '労働'] AS tags,
+    now() - interval '11 days',
+    now() - interval '3 days'
+
+  UNION ALL
+  -- Post 10
+  SELECT
+    uuid_generate_v4(),
+    '日本の再生可能エネルギー：洋上風力発電の可能性',
+    'japan-offshore-wind-energy-potential',
+    'published'::post_status,
+    '四方を海に囲まれた日本にとって、洋上風力発電は切り札になるのか。',
+    $$# 日本の再生可能エネルギー：洋上風力発電の可能性
+
+2050年のカーボンニュートラル達成を目指す日本にとって、再生可能エネルギーの拡大は不可欠です。中でも、四方を海に囲まれた日本の地理的条件を活かせる洋上風力発電に大きな期待が寄せられています。
+
+## なぜ洋上風力なのか
+
+日本の国土は狭く、山地が多いため、陸上での太陽光パネルや風力発電の大規模展開には限界があります。一方、日本は世界第6位の排他的経済水域（EEZ）を持ち、洋上風力発電のポテンシャルは莫大です。政府は2030年までに10GW、2040年までに30〜45GWの洋上風力発電の導入を目標としています。
+
+洋上は陸上に比べて風が強く安定しているため、発電効率が高いという利点もあります。景観への影響や騒音問題も、沿岸から十分に離れた場所に設置することで軽減できます。
+
+## 着床式と浮体式
+
+洋上風力発電には、海底に基礎を固定する「着床式」と、海面に浮かぶ構造物の上にタービンを設置する「浮体式」の2種類があります。欧州で主流の着床式は、水深が浅い海域に適していますが、日本の近海は水深が急激に深くなるため、適地が限られます。
+
+そこで注目されているのが浮体式洋上風力発電です。日本は、福島沖や長崎県五島列島沖で世界に先駆けて浮体式の実証実験を行ってきました。この技術が確立されれば、日本の広大なEEZを活用した大規模発電が可能になります。
+
+## 先行する秋田と長崎
+
+2022年末に商業運転を開始した秋田県能代市沖の洋上風力発電所は、日本初の大規模商業洋上風力として注目を集めました。続いて秋田県由利本荘市沖や長崎県西海市沖でも大規模プロジェクトが進行しています。
+
+これらのプロジェクトは地域経済にも大きな影響を与えています。建設・維持管理に伴う雇用創出、港湾の整備、関連産業の誘致など、地方創生の新たな柱としての期待も高まっています。
+
+## 課題と展望
+
+しかし、課題も多くあります。環境アセスメントの手続きに時間がかかること、漁業者との調整が難航するケース、送電網の容量不足、そして何よりコストの問題です。欧州に比べて日本の洋上風力のコストは高く、国際競争力のある産業に育てるためには、サプライチェーンの国内構築が不可欠です。
+
+台風や地震といった日本特有の自然災害リスクへの対策も必要です。設備の耐久性向上や、災害時の対応計画の整備が求められています。
+
+エネルギー安全保障と脱炭素の両面から、洋上風力発電は日本のエネルギー政策の重要なピースです。海に囲まれているという地理的特性を強みに変えられるか。日本のエネルギーの未来がかかっています。$$,
+    'markdown',
+    (SELECT "id" FROM seed_user),
+    '{"id":"img-wind","url":"https://images.unsplash.com/photo-1532601224476-15c79f2f7a51","alt":"洋上風力発電"}'::jsonb,
+    false,
+    189,
+    ARRAY['エネルギー', '環境'] AS categories,
+    ARRAY['洋上風力', '再生可能エネルギー', '脱炭素'] AS tags,
+    now() - interval '10 days',
+    now() - interval '2 days'
+
+  UNION ALL
+  -- Post 11
+  SELECT
+    uuid_generate_v4(),
+    '大谷翔平効果：MLBと日本スポーツビジネスの新時代',
+    'ohtani-effect-mlb-japan-sports-business',
+    'published'::post_status,
+    '大谷翔平の活躍がMLBと日本のスポーツビジネスに与える経済的インパクトを分析します。',
+    $$# 大谷翔平効果：MLBと日本スポーツビジネスの新時代
+
+ロサンゼルス・ドジャースの大谷翔平選手は、野球という枠を超えた文化現象となっています。2024年のワールドシリーズ制覇、そして2025年シーズンでの驚異的なパフォーマンスは、MLBのビジネスモデルそのものを変えつつあります。
+
+## 数字が物語る「大谷効果」
+
+大谷選手のドジャースへの移籍は、10年総額7億ドルという北米プロスポーツ史上最高額の契約でした。しかし、ドジャースにとってこの投資は既に回収段階に入っていると言われています。
+
+ドジャースの試合の日本での放映権料は大幅に増加し、日本企業のスポンサー契約も急増しました。大谷選手のユニフォームは、MLBグッズ売上で常にトップを記録しています。ドジャー・スタジアムには日本語の案内表示が増え、日本食のコーナーも新設されました。
+
+MLB全体への波及効果も顕著です。日本でのMLB放送の視聴率は大幅に上昇し、日本市場はMLBにとって北米以外で最も重要な市場の一つとなっています。
+
+## 日本のスポーツビジネスへの影響
+
+大谷選手の成功は、日本国内のスポーツビジネスにも刺激を与えています。少年野球の競技人口は減少傾向にありましたが、大谷選手の活躍をきっかけに野球を始める子どもが増えているというデータもあります。大谷選手が全国の小学校に寄贈した約6万個のグローブは、子どもたちに野球への興味を持たせる大きなきっかけとなりました。
+
+日本のプロ野球（NPB）も、国際的な選手育成機関としての評価を高めています。大谷選手を輩出した日本ハムファイターズの育成システムや、高校野球の教育的価値が改めて注目されています。
+
+## スポンサーシップの変化
+
+大谷選手の広告価値は、日本のアスリートとしては空前の規模です。ニューバランス、セイコー、JAL、コーセーなど、多岐にわたるスポンサー契約を持ち、その広告収入は年間数十億円と推定されています。
+
+興味深いのは、大谷選手の広告が従来のスポーツ用品だけでなく、化粧品や航空会社、保険など幅広い業種に広がっていることです。これは、大谷選手の好感度の高さと、性別や年齢を問わない幅広い支持基盤を反映しています。
+
+## 日本スポーツの国際化
+
+大谷選手の成功は、日本のスポーツ全体の国際化を促進しています。サッカーでは欧州リーグで活躍する日本人選手が増え、バスケットボールでは八村塁選手がNBAで活躍しています。日本人アスリートが世界のトップリーグで当たり前のように活躍する時代が来ています。
+
+この流れは、日本のスポーツ産業に新たなビジネスチャンスをもたらしています。選手のマネジメント、国際的なメディアライツ、グローバルなファンエンゲージメントなど、成長の余地は大きいと言えるでしょう。大谷翔平という存在は、日本スポーツビジネスの新時代の象徴なのです。$$,
+    'markdown',
+    (SELECT "id" FROM seed_user),
+    '{"id":"img-ohtani","url":"https://images.unsplash.com/photo-1508344928928-7165b67de128","alt":"野球"}'::jsonb,
+    true,
+    356,
+    ARRAY['スポーツ', '経済'] AS categories,
+    ARRAY['大谷翔平', 'MLB', 'スポーツビジネス'] AS tags,
+    now() - interval '8 days',
+    now() - interval '1 day'
+
+  UNION ALL
+  -- Post 12
+  SELECT
+    uuid_generate_v4(),
+    '日本の空き家問題：900万戸の衝撃と再生への道',
+    'japan-vacant-houses-crisis-solutions',
+    'published'::post_status,
+    '過去最多の900万戸に達した空き家。その原因と各地で始まる再生の取り組みを紹介します。',
+    $$# 日本の空き家問題：900万戸の衝撃と再生への道
+
+2023年の住宅・土地統計調査で、日本の空き家数が約900万戸に達したことが明らかになりました。住宅全体の約13.8%が空き家という衝撃的な数字です。人口減少が進む日本で、空き家問題は地方だけでなく都市部にも広がりつつあります。
+
+## なぜ空き家は増え続けるのか
+
+空き家増加の最大の要因は、人口減少と高齢化です。高齢の所有者が施設に入居したり亡くなったりした後、相続人が遠方に住んでいたり、相続を放棄したりするケースが増えています。特に地方では、若者が都市部に流出し、実家を引き継ぐ人がいないという状況が一般的になっています。
+
+もう一つの要因は、日本特有の新築偏重の住宅市場です。日本では毎年約80万戸の新築住宅が建設される一方、中古住宅の流通市場は欧米に比べて著しく小さいのが現状です。「新しい家に住みたい」という消費者の志向と、新築を推進する住宅産業の構造が、空き家の増加に拍車をかけています。
+
+また、固定資産税の特例制度も問題を複雑にしています。住宅が建っている土地は、更地に比べて固定資産税が最大6分の1に軽減されるため、使わない家でも解体せずに放置する動機が生まれます。
+
+## 空き家がもたらすリスク
+
+放置された空き家は、さまざまなリスクを生みます。老朽化による倒壊の危険、放火や不法侵入の温床、害虫や害獣の発生、景観の悪化、そして周辺の不動産価値の低下です。2015年に施行された空家等対策特別措置法により、自治体は危険な空き家の所有者に対して指導や勧告を行えるようになりましたが、対応が追いついていないのが現状です。
+
+2023年の法改正では、「管理不全空家」という新たなカテゴリーが設けられ、固定資産税の優遇措置が解除される仕組みが導入されました。これにより、空き家の放置に対する抑止力が強化されることが期待されています。
+
+## 各地で始まる再生の取り組み
+
+一方で、空き家を地域資源として活用する取り組みも全国各地で広がっています。尾道市では、NPO法人が空き家バンクを運営し、移住者やアーティストに空き家を紹介する活動が成果を上げています。古民家をカフェやゲストハウスにリノベーションする事例も増え、地域に新たな魅力を生み出しています。
+
+長野県では、テレワークの普及を受けて、空き家をリモートワーク拠点として整備するプロジェクトが進んでいます。都市部の企業と地方自治体が連携し、サテライトオフィスとして空き家を活用する取り組みは、関係人口の増加にもつながっています。
+
+## 解決への長い道のり
+
+空き家問題の根本的な解決には、人口減少社会に対応した住宅政策への転換が不可欠です。新築中心から中古住宅の流通促進へ、所有から活用へ。意識と制度の両面での変革が求められています。900万戸の空き家は、日本社会が抱える構造的課題の象徴です。この問題にどう向き合うかは、日本の地域社会の未来を左右するでしょう。$$,
+    'markdown',
+    (SELECT "id" FROM seed_user),
+    NULL,
+    false,
+    201,
+    ARRAY['社会', '不動産'] AS categories,
+    ARRAY['空き家', '人口減少', '地方創生'] AS tags,
+    now() - interval '6 days',
     now() - interval '1 day'
 )
 INSERT INTO "blog_posts" (

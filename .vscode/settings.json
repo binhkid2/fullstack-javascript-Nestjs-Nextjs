@@ -7,6 +7,14 @@
             "driver": "PostgreSQL",
             "name": "aaa",
             "connectString": "postgresql://binhdz:whatever@162.43.15.117:5445/nestjs_nextjs"
+        },
+        {
+            "ssh": "Disabled",
+            "previewLimit": 50,
+            "server": "localhost",
+            "driver": "PostgreSQL",
+            "connectString": "postgresql://binhdz:whatever@162.43.15.117:5445/nestjs_nextjs",
+            "name": "nestjs"
         }
     ]
 }
