@@ -11,7 +11,7 @@ You get an `accessToken` by authenticating against the backend. The backend retu
 ### Option 1: Login with email + password
 
 ```bash
-curl -X POST http://localhost:3000/auth/login \
+curl -X POST http://localhost:1234/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email":"you@example.com","password":"YourPass123!"}'
 ```
@@ -34,13 +34,13 @@ Response (example):
 
 1. Request a link:
 ```bash
-curl -X POST http://localhost:3000/auth/magic-link \
+curl -X POST http://localhost:1234/auth/magic-link \
   -H "Content-Type: application/json" \
   -d '{"email":"you@example.com"}'
 ```
 2. Use the link from email (or call verify directly):
 ```bash
-curl "http://localhost:3000/auth/magic-link/verify?email=you@example.com&token=THE_TOKEN"
+curl "http://localhost:1234/auth/magic-link/verify?email=you@example.com&token=THE_TOKEN"
 ```
 
 ### Using the `accessToken`
@@ -48,7 +48,7 @@ curl "http://localhost:3000/auth/magic-link/verify?email=you@example.com&token=T
 Use it as a Bearer token on protected endpoints:
 
 ```bash
-curl http://localhost:3000/blog-posts \
+curl http://localhost:1234/blog-posts \
   -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
 ```
 
@@ -87,3 +87,4 @@ docker compose down --volumes
 docker compose build --no-cache
 docker compose up --force-recreate
 ```
+  [Then run this seed sql code if you want some seed blog posts]( ./backend/src/migrations/blog-posts-seed.sql)

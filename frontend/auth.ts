@@ -54,7 +54,7 @@ export const authOptions: NextAuthOptions = {
         const apiUrl =
           process.env.INTERNAL_API_URL ??
           process.env.NEXT_PUBLIC_API_URL ??
-          'http://localhost:3000';
+          'http://localhost:1234';
 
         const response = await fetch(
           `${apiUrl}/auth/magic-link/verify?email=${encodeURIComponent(
@@ -97,7 +97,7 @@ export const authOptions: NextAuthOptions = {
         const apiUrl =
           process.env.INTERNAL_API_URL ??
           process.env.NEXT_PUBLIC_API_URL ??
-          'http://localhost:3000';
+          'http://localhost:1234';
 
         const response = await fetch(`${apiUrl}/auth/login`, {
           method: 'POST',

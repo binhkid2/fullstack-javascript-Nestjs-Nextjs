@@ -32,7 +32,7 @@ async function bootstrap() {
     'Admin',
   );
 
-  await app.listen(process.env.APP_PORT || 3000);
+  await app.listen(process.env.APP_PORT || 1234);
 }
 
 bootstrap();

@@ -182,7 +182,7 @@ Frontend expects:
 - `NEXTAUTH_URL`
 - `NEXTAUTH_SECRET`
 - `NEXT_PUBLIC_API_URL` (backend API URL)
-- `INTERNAL_API_URL` (server-side API host; use `http://localhost:3000` when running separately)
+- `INTERNAL_API_URL` (server-side API host; use `http://localhost:1234` when running separately)
 
 ---
 

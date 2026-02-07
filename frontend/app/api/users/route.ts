@@ -5,7 +5,7 @@ import { authOptions } from '@/auth';
 const apiUrl =
   process.env.INTERNAL_API_URL ??
   process.env.NEXT_PUBLIC_API_URL ??
-  'http://localhost:3000';
+  'http://localhost:1234';
 
 export async function GET() {
   const session = await getServerSession(authOptions);

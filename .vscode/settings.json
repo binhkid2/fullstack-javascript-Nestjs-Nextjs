@@ -6,7 +6,7 @@
             "server": "localhost",
             "driver": "PostgreSQL",
             "name": "aaa",
-            "connectString": "postgresql://binhdz:whatever@162.43.15.117:5445/boilerplate"
+            "connectString": "postgresql://binhdz:whatever@162.43.15.117:5445/nestjs_nextjs"
         }
     ]
 }
