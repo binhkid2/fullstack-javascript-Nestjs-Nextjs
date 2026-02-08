@@ -2,24 +2,69 @@ services:
   backend:
     build: ./backend
     container_name: nest_api
-    restart: unless-stopped
+    restart: on-failure:5
+    init: true
     entrypoint: ["./entrypoint.sh"]
     env_file:
       - .env
-    ports:
-      - "1234:1234"
+    environment:
+      NODE_ENV: production
+      APP_HOST: 0.0.0.0
+      INTERNAL_API_URL: http://backend:1234
+    expose:
+      - "1234"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://localhost:1234/health').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 15s
+      timeout: 5s
+      retries: 6
+      start_period: 45s
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+    cpus: "1.00"
+    mem_limit: 768m
 
   frontend:
     build: ./frontend
     container_name: next_web
     restart: unless-stopped
+    init: true
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     env_file:
       - .env
     environment:
+      NODE_ENV: production
+      NEXT_TELEMETRY_DISABLED: "1"
       NEXTAUTH_URL: ${NEXTAUTH_URL:-http://localhost:3001}
       NEXTAUTH_SECRET: ${NEXTAUTH_SECRET:-change_me_nextauth}
       INTERNAL_API_URL: http://backend:1234
     ports:
       - "3001:3000"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://localhost:3000/auth').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 20s
+      timeout: 5s
+      retries: 6
+      start_period: 40s
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+    cpus: "1.00"
+    mem_limit: 768m
