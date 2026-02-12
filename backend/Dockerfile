@@ -16,9 +16,6 @@ ENV NODE_ENV=production
 COPY package.json package-lock.json* ./
 RUN npm install --omit=dev
 
-COPY --from=base /app/dist ./dist
-COPY entrypoint.sh ./entrypoint.sh
-RUN chmod +x ./entrypoint.sh
+COPY --from=base /app/dist ./dist 
 
-EXPOSE 1234
-ENTRYPOINT ["./entrypoint.sh"]
+EXPOSE 1234 
