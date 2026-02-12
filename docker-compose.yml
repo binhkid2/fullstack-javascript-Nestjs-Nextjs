@@ -4,7 +4,6 @@ services:
     container_name: nest_api
     restart: on-failure:5
     init: true
-    entrypoint: ["./entrypoint.sh"]
     env_file:
       - .env
     environment:
