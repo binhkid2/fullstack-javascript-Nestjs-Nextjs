@@ -1,0 +1,1 @@
+#### run init.sql and blog-posts-seed.sql to seed demo data

@@ -81,6 +81,7 @@ Seeded account:
 This is created in `backend/src/main.ts` via `UsersService.ensureAdminSeed(...)`.
 
 # HOW to start project using docker compose
+# #### run init.sql and blog-posts-seed.sql to seed demo data
 ### * fill .env in root then run
 ```
 docker compose down --volumes
